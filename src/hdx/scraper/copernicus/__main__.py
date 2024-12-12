@@ -67,9 +67,7 @@ def main(
             for dataset_name in dataset_names:
                 dataset = copernicus.generate_dataset(dataset_name)
                 dataset.update_from_yaml(
-                    path=join(
-                        dirname(__file__), "config", "hdx_dataset_static.yaml"
-                    )
+                    path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
                 )
                 dataset.create_in_hdx(
                     remove_additional_resources=True,
@@ -83,9 +81,9 @@ def main(
 if __name__ == "__main__":
     facade(
         main,
-        hdx_site="dev",
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=_USER_AGENT_LOOKUP,
         project_config_yaml=join(
-            dirname(__file__), "config", "project_configuration.yaml"),
+            dirname(__file__), "config", "project_configuration.yaml"
+        ),
     )

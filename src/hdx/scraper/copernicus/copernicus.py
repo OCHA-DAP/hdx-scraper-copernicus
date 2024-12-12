@@ -5,7 +5,6 @@ import logging
 from typing import List, Optional
 
 from geopandas import GeoDataFrame, read_file
-
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
@@ -15,10 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class Copernicus:
-
-    def __init__(
-        self, configuration: Configuration, retriever: Retrieve
-    ):
+    def __init__(self, configuration: Configuration, retriever: Retrieve):
         self._configuration = configuration
         self._retriever = retriever
         self.global_data = GeoDataFrame()

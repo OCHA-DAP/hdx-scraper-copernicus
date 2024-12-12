@@ -31,13 +31,7 @@ class TestCopernicus:
     def config_dir(self, fixtures_dir):
         return join("src", "hdx", "scraper", "copernicus", "config")
 
-    def test_copernicus(
-        self,
-        configuration,
-        fixtures_dir,
-        input_dir,
-        config_dir
-    ):
+    def test_copernicus(self, configuration, fixtures_dir, input_dir, config_dir):
         with temp_dir(
             "TestCopernicus",
             delete_on_success=True,
@@ -53,6 +47,4 @@ class TestCopernicus:
                     use_saved=True,
                 )
 
-                dataset.update_from_yaml(
-                    path=join(config_dir, "hdx_dataset_static.yaml")
-                )
+                dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
