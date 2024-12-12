@@ -16,12 +16,20 @@ logger = logging.getLogger(__name__)
 class Copernicus:
 
     def __init__(
-        self, configuration: Configuration, retriever: Retrieve, temp_dir: str
+        self, configuration: Configuration, retriever: Retrieve
     ):
         self._configuration = configuration
         self._retriever = retriever
-        self._temp_dir = temp_dir
+        self.data = {}
 
+    def get_boundaries(self):
+        return
+
+    def get_ghs_data(self):
+        return
+
+    def process(self) -> List:
+        return []
 
     def generate_dataset(self) -> Optional[Dataset]:
 

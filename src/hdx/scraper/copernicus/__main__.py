@@ -16,6 +16,8 @@ from hdx.utilities.path import (
 )
 from hdx.utilities.retriever import Retrieve
 
+from copernicus import Copernicus
+
 logger = logging.getLogger(__name__)
 
 _USER_AGENT_LOOKUP = "hdx-scraper-copernicus"
@@ -48,21 +50,28 @@ def main(
                 use_saved=use_saved,
             )
             configuration = Configuration.read()
-            #
-            # Steps to generate dataset
-            #
-            dataset.update_from_yaml(
-                path=join(
-                    dirname(__file__), "config", "hdx_dataset_static.yaml"
+            copernicus = Copernicus(
+                configuration,
+                retriever,
+            )
+            copernicus.get_boundaries()
+            copernicus.get_ghs_data()
+            dataset_names = copernicus.process()
+
+            for dataset_name in dataset_names:
+                dataset = copernicus.generate_dataset(dataset_name)
+                dataset.update_from_yaml(
+                    path=join(
+                        dirname(__file__), "config", "hdx_dataset_static.yaml"
+                    )
                 )
-            )
-            dataset.create_in_hdx(
-                remove_additional_resources=True,
-                match_resource_order=False,
-                hxl_update=False,
-                updated_by_script=_UPDATED_BY_SCRIPT,
-                batch=info["batch"],
-            )
+                dataset.create_in_hdx(
+                    remove_additional_resources=True,
+                    match_resource_order=False,
+                    hxl_update=False,
+                    updated_by_script=_UPDATED_BY_SCRIPT,
+                    batch=info["batch"],
+                )
 
 
 if __name__ == "__main__":
