@@ -1,6 +1,6 @@
-# Collector for ghsl Datasets
-[![Build Status](https://github.com/OCHA-DAP/hdx-scraper-ghsl/actions/workflows/run-python-tests.yaml/badge.svg)](https://github.com/OCHA-DAP/hdx-scraper-ghsl/actions/workflows/run-python-tests.yaml)
-[![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-ghsl/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-ghsl?branch=main)
+# Collector for copernicus Datasets
+[![Build Status](https://github.com/OCHA-DAP/hdx-scraper-copernicus/actions/workflows/run-python-tests.yaml/badge.svg)](https://github.com/OCHA-DAP/hdx-scraper-copernicus/actions/workflows/run-python-tests.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-copernicus/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-copernicus?branch=main)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 This script ...
@@ -32,7 +32,7 @@ For the script to run, you will need to have a file called
 
  You will also need to supply the universal .useragents.yaml file in your home
  directory as specified in the parameter *user_agent_config_yaml* passed to
- facade in run.py. The collector reads the key **hdx-scraper-ghsl** as specified
+ facade in run.py. The collector reads the key **hdx-scraper-copernicus** as specified
  in the parameter *user_agent_lookup*.
 
  Alternatively, you can set up environment variables: `USER_AGENT`, `HDX_KEY`,
@@ -41,7 +41,7 @@ For the script to run, you will need to have a file called
 To install and run, execute:
 
     pip install .
-    python -m hdx.scraper.ghsl
+    python -m hdx.scraper.copernicus
 
 ## Environment
 
