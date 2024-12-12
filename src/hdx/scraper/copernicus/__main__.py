@@ -11,6 +11,7 @@ from os.path import dirname, expanduser, join
 from hdx.api.configuration import Configuration
 from hdx.data.user import User
 from hdx.facades.infer_arguments import facade
+from hdx.utilities.dateparse import now_utc
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import (
     wheretostart_tempdir_batch,
@@ -47,6 +48,8 @@ def main(
 
     with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
         temp_dir = info["folder"]
+        today = now_utc()
+        year = today.year
         with Download() as downloader:
             retriever = Retrieve(
                 downloader=downloader,
@@ -61,7 +64,7 @@ def main(
                 retriever,
             )
             copernicus.get_boundaries()
-            copernicus.get_ghs_data()
+            copernicus.get_ghs_data(year)
             dataset_names = copernicus.process()
 
             for dataset_name in dataset_names:
@@ -69,13 +72,13 @@ def main(
                 dataset.update_from_yaml(
                     path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
                 )
-                dataset.create_in_hdx(
-                    remove_additional_resources=True,
-                    match_resource_order=False,
-                    hxl_update=False,
-                    updated_by_script=_UPDATED_BY_SCRIPT,
-                    batch=info["batch"],
-                )
+                # dataset.create_in_hdx(
+                #     remove_additional_resources=True,
+                #     match_resource_order=False,
+                #     hxl_update=False,
+                #     updated_by_script=_UPDATED_BY_SCRIPT,
+                #     batch=info["batch"],
+                # )
 
 
 if __name__ == "__main__":
