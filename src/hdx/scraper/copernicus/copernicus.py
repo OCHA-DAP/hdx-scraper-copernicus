@@ -4,6 +4,7 @@
 import logging
 from typing import List, Optional
 
+from geopandas import GeoDataFrame, read_file
 
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
@@ -20,10 +21,22 @@ class Copernicus:
     ):
         self._configuration = configuration
         self._retriever = retriever
+        self.global_data = GeoDataFrame()
         self.data = {}
 
     def get_boundaries(self):
-        return
+        dataset = Dataset.read_from_hdx(self._configuration["boundary_dataset"])
+        resources = dataset.get_resources()
+        for resource in resources:
+            if self._configuration["boundary_resource"] not in resource["name"]:
+                continue
+            if self._retriever.save:
+                folder = self._retriever.saved_dir
+            else:
+                folder = self._retriever.temp_dir
+            _, file_path = resource.download(folder)
+            self.global_data = read_file(file_path)
+            return
 
     def get_ghs_data(self):
         return
