@@ -1,1 +1,10 @@
 # Collector specific configuration
+boundary_dataset: "unmap-international-boundaries-geojson"
+
+boundary_resource: "polbnda_int_15m"
+
+base_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
+
+file_patterns:
+  built: "GHS_BUILT_S_GLOBE"
+  population: "GHS_POP_GLOBE"
