@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""ghsl scraper"""
+"""copernicus scraper"""
 
 import logging
 from typing import List, Optional
@@ -13,7 +13,7 @@ from hdx.utilities.retriever import Retrieve
 logger = logging.getLogger(__name__)
 
 
-class ghsl:
+class Copernicus:
 
     def __init__(
         self, configuration: Configuration, retriever: Retrieve, temp_dir: str

@@ -8,7 +8,7 @@ from hdx.utilities.retriever import Retrieve
 from hdx.utilities.useragent import UserAgent
 
 
-class Testghsl:
+class TestCopernicus:
     @pytest.fixture(scope="function")
     def configuration(self, config_dir):
         UserAgent.set_global("test")
@@ -29,9 +29,9 @@ class Testghsl:
 
     @pytest.fixture(scope="class")
     def config_dir(self, fixtures_dir):
-        return join("src", "hdx", "scraper", "ghsl", "config")
+        return join("src", "hdx", "scraper", "copernicus", "config")
 
-    def test_ghsl(
+    def test_copernicus(
         self,
         configuration,
         fixtures_dir,
@@ -39,7 +39,7 @@ class Testghsl:
         config_dir
     ):
         with temp_dir(
-            "Testghsl",
+            "TestCopernicus",
             delete_on_success=True,
             delete_on_failure=False,
         ) as tempdir:

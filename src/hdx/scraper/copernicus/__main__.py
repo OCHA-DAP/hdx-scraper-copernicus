@@ -18,9 +18,9 @@ from hdx.utilities.retriever import Retrieve
 
 logger = logging.getLogger(__name__)
 
-_USER_AGENT_LOOKUP = "hdx-scraper-ghsl"
+_USER_AGENT_LOOKUP = "hdx-scraper-copernicus"
 _SAVED_DATA_DIR = "saved_data"  # Keep in repo to avoid deletion in /tmp
-_UPDATED_BY_SCRIPT = "HDX Scraper: ghsl"
+_UPDATED_BY_SCRIPT = "HDX Scraper: copernicus"
 
 
 def main(
