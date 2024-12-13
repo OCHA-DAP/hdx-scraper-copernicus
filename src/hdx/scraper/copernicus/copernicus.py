@@ -7,14 +7,17 @@ from os.path import join
 from typing import List, Optional
 from zipfile import ZipFile
 
+import rasterio
 from bs4 import BeautifulSoup
 from geopandas import GeoDataFrame, read_file
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
-from hdx.utilities.dictandlist import dict_of_lists_add
+from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 from shapely.validation import make_valid
+from rasterio.mask import mask
+from rasterio.merge import merge
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +33,7 @@ class Copernicus:
         self.global_data = GeoDataFrame()
         self.latest_data = {}
         self.latest_data_urls = {}
-        self.data = {}
+        self.country_data = {}
 
     def get_lines(self, url: str, filename: Optional[str] = None) -> List[str]:
         text = self._retriever.download_text(url, filename=filename)
@@ -105,7 +108,31 @@ class Copernicus:
                 dict_of_lists_add(self.latest_data, data_type, file_path)
 
     def process(self) -> List:
-        return []
+        for data_type, raster_list in self.latest_data.items():
+            files_to_mosaic = []
+            for raster_file in raster_list:
+                open_file = rasterio.open(raster_file)
+                files_to_mosaic.append(open_file)
+            raster_mosaic, raster_trans = merge(files_to_mosaic)
+            for i, row in self.global_data.iterrows():
+                iso = row["Color_Code"]
+                if iso[:2] == "XX":
+                    continue
+                mask_raster, mask_transform = mask(raster_mosaic, row.geometry, all_touched=True)
+                out_meta = open_file.meta.copy()
+                out_meta.update(
+                    {
+                        "height": raster_mosaic.shape[1],
+                        "width": raster_mosaic.shape[2],
+                        "transform": raster_trans,
+                    }
+                )
+                out_meta.update({"transform": mask_transform})
+                country_raster = join(self.folder, f"{iso}_{raster_list[0].replace("GLOBE_", "").replace("R1_C13", "")}")
+                with rasterio.open(country_raster, "w", **out_meta) as dest:
+                    dest.write(mask_raster)
+                dict_of_dicts_add(self.country_data, iso, data_type, country_raster)
+        return list(self.country_data.keys())
 
     def generate_dataset(self, dataset_name: str) -> Optional[Dataset]:
         dataset_title = None

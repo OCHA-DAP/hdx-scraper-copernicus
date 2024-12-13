@@ -65,10 +65,10 @@ def main(
             )
             copernicus.get_boundaries()
             copernicus.get_ghs_data(year)
-            dataset_names = copernicus.process()
+            iso3s_to_upload = copernicus.process()
 
-            for dataset_name in dataset_names:
-                dataset = copernicus.generate_dataset(dataset_name)
+            for iso3 in iso3s_to_upload:
+                dataset = copernicus.generate_dataset(iso3)
                 dataset.update_from_yaml(
                     path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
                 )
