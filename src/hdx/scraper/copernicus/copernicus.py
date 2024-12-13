@@ -14,6 +14,7 @@ from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.utilities.dictandlist import dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
+from shapely.validation import make_valid
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +47,15 @@ class Copernicus:
             _, file_path = resource.download(self.folder)
             lyr = read_file(file_path)
             lyr = lyr.to_crs(crs="ESRI:54009")
+            for i, _ in lyr.iterrows():
+                if not lyr.geometry[i].is_valid:
+                    lyr.geometry[i] = make_valid(lyr.geometry[i])
+            lyr.loc[lyr["ISO_3"] == "PSE", "Color_Code"] = "PSE"
+            lyr = lyr.dissolve(by="Color_Code", as_index=False)
+            lyr = lyr.drop(
+                [f for f in lyr.columns if f.lower() not in ["color_code", "geometry"]],
+                axis=1,
+            )
             self.global_data = lyr
             return
 
