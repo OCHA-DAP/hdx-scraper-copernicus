@@ -3,6 +3,7 @@
 
 import logging
 import re
+from json import loads
 from os.path import join
 from typing import List, Optional
 from zipfile import ZipFile
@@ -15,11 +16,10 @@ from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
-from json import loads
-from shapely.validation import make_valid
 from rasterio import MemoryFile
 from rasterio.mask import mask
 from rasterio.merge import merge
+from shapely.validation import make_valid
 
 logger = logging.getLogger(__name__)
 
@@ -133,13 +133,19 @@ class Copernicus:
                         iso = row["properties"]["Color_Code"]
                         if iso[:2] == "XX":
                             continue
-                        mask_raster, mask_transform = mask(dataset, [row["geometry"]], all_touched=True)
+                        mask_raster, mask_transform = mask(
+                            dataset, [row["geometry"]], all_touched=True
+                        )
                         mask_meta = dataset.meta.copy()
                         mask_meta.update({"transform": mask_transform})
-                        country_raster = f"{raster_list[0].replace('GLOBE_', '')[:-10]}{iso}.tif"
+                        country_raster = (
+                            f"{raster_list[0].replace('GLOBE_', '')[:-10]}{iso}.tif"
+                        )
                         with rasterio.open(country_raster, "w", **mask_meta) as dest:
                             dest.write(mask_raster)
-                        dict_of_dicts_add(self.country_data, iso, data_type, country_raster)
+                        dict_of_dicts_add(
+                            self.country_data, iso, data_type, country_raster
+                        )
         return list(self.country_data.keys())
 
     def generate_dataset(self, dataset_name: str) -> Optional[Dataset]:
