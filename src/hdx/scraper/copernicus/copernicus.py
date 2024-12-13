@@ -49,7 +49,7 @@ class Copernicus:
             lyr = lyr.to_crs(crs="ESRI:54009")
             for i, _ in lyr.iterrows():
                 if not lyr.geometry[i].is_valid:
-                    lyr.geometry[i] = make_valid(lyr.geometry[i])
+                    lyr.loc[i, "geometry"] = make_valid(lyr.geometry[i])
             lyr.loc[lyr["ISO_3"] == "PSE", "Color_Code"] = "PSE"
             lyr = lyr.dissolve(by="Color_Code", as_index=False)
             lyr = lyr.drop(
