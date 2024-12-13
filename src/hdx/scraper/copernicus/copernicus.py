@@ -113,7 +113,7 @@ class Copernicus:
             for raster_file in raster_list:
                 open_file = rasterio.open(raster_file)
                 files_to_mosaic.append(open_file)
-            raster_mosaic, raster_trans = merge(files_to_mosaic)
+            raster_mosaic, mosaic_transform = merge(files_to_mosaic)
             for i, row in self.global_data.iterrows():
                 iso = row["Color_Code"]
                 if iso[:2] == "XX":
@@ -124,7 +124,7 @@ class Copernicus:
                     {
                         "height": raster_mosaic.shape[1],
                         "width": raster_mosaic.shape[2],
-                        "transform": raster_trans,
+                        "transform": mosaic_transform,
                     }
                 )
                 out_meta.update({"transform": mask_transform})
