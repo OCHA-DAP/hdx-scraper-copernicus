@@ -3,6 +3,7 @@
 
 import logging
 import re
+from os.path import join
 from typing import List, Optional
 from zipfile import ZipFile
 
@@ -11,6 +12,7 @@ from geopandas import GeoDataFrame, read_file
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
+from hdx.utilities.dictandlist import dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 
 logger = logging.getLogger(__name__)
@@ -29,6 +31,12 @@ class Copernicus:
         self.latest_data_urls = {}
         self.data = {}
 
+    def get_lines(self, url: str, filename: Optional[str] = None) -> List[str]:
+        text = self._retriever.download_text(url, filename=filename)
+        soup = BeautifulSoup(text, "html.parser")
+        lines = soup.find_all("a")
+        return lines
+
     def get_boundaries(self):
         dataset = Dataset.read_from_hdx(self._configuration["boundary_dataset"])
         resources = dataset.get_resources()
@@ -42,9 +50,7 @@ class Copernicus:
     def get_ghs_data(self, current_year: int):
         file_patterns = self._configuration["file_patterns"]
         base_url = self._configuration["base_url"]
-        text = self._retriever.download_text(base_url, filename="ghsl_ftp.txt")
-        soup = BeautifulSoup(text, "html.parser")
-        lines = soup.find_all("a")
+        lines = self.get_lines(base_url, "ghsl_ftp.txt")
         for data_type, subfolder_pattern in file_patterns.items():
             subfolders = []
             for line in lines:
@@ -53,12 +59,10 @@ class Copernicus:
                     continue
                 subfolders.append(subfolder)
             subfolder = _select_latest_data(_MODELED_YEAR_PATTERN, subfolders)
-            subfolder_text = self._retriever.download_text(
+            sub_lines = self.get_lines(
                 f"{base_url}{subfolder}",
                 filename=f"{subfolder.replace("/", "")}.txt",
             )
-            sub_soup = BeautifulSoup(subfolder_text, "html.parser")
-            sub_lines = sub_soup.find_all("a")
             subsubfolders = []
             for sub_line in sub_lines:
                 subsubfolder = sub_line.get("href")
@@ -70,13 +74,23 @@ class Copernicus:
             subsubfolder = _select_latest_data(
                 _DATA_YEAR_PATTERN, subsubfolders, current_year
             )
-            file_name = f"{subsubfolder.replace('/', '')}_V1_0"
-            file_to_download = f"{base_url}{subfolder}{subsubfolder}V1-0/{file_name}.zip"
-            self.latest_data_urls[data_type] = file_to_download
-            zip_file_path = self._retriever.download_file(file_to_download)
-            with ZipFile(zip_file_path, "r") as z:
-                file_path = z.extract(f"{file_name}.tif", self.folder)
-            self.latest_data[data_type] = file_path
+            tile_lines = self.get_lines(
+                f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/",
+                filename=f"{subsubfolder.replace("/", "")}.txt",
+            )
+            for tile_line in tile_lines:
+                zip_file = tile_line.get("href")
+                if ".zip" not in zip_file:
+                    continue
+                zip_url = f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/{zip_file}"
+                dict_of_lists_add(self.latest_data_urls, data_type, zip_url)
+                zip_file_path = self._retriever.download_file(zip_url)
+                if self._retriever.use_saved:
+                    file_path = join(self.folder, f"{zip_file[:-4]}.tif")
+                else:
+                    with ZipFile(zip_file_path, "r") as z:
+                        file_path = z.extract(f"{zip_file[:-4]}.tif", self.folder)
+                dict_of_lists_add(self.latest_data, data_type, file_path)
 
     def process(self) -> List:
         return []
