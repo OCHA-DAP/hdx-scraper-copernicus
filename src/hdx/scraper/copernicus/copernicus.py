@@ -44,7 +44,9 @@ class Copernicus:
             if self._configuration["boundary_resource"] not in resource["name"]:
                 continue
             _, file_path = resource.download(self.folder)
-            self.global_data = read_file(file_path)
+            lyr = read_file(file_path)
+            lyr = lyr.to_crs(crs="ESRI:54009")
+            self.global_data = lyr
             return
 
     def get_ghs_data(self, current_year: int):
