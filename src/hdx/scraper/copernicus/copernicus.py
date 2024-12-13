@@ -15,7 +15,9 @@ from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
+from json import loads
 from shapely.validation import make_valid
+from rasterio import MemoryFile
 from rasterio.mask import mask
 from rasterio.merge import merge
 
@@ -59,6 +61,7 @@ class Copernicus:
                 [f for f in lyr.columns if f.lower() not in ["color_code", "geometry"]],
                 axis=1,
             )
+            lyr = loads(lyr.to_json())["features"]
             self.global_data = lyr
             return
 
@@ -113,25 +116,30 @@ class Copernicus:
             for raster_file in raster_list:
                 open_file = rasterio.open(raster_file)
                 files_to_mosaic.append(open_file)
-            raster_mosaic, mosaic_transform = merge(files_to_mosaic)
-            for i, row in self.global_data.iterrows():
-                iso = row["Color_Code"]
-                if iso[:2] == "XX":
-                    continue
-                mask_raster, mask_transform = mask(raster_mosaic, row.geometry, all_touched=True)
-                out_meta = open_file.meta.copy()
-                out_meta.update(
-                    {
-                        "height": raster_mosaic.shape[1],
-                        "width": raster_mosaic.shape[2],
-                        "transform": mosaic_transform,
-                    }
-                )
-                out_meta.update({"transform": mask_transform})
-                country_raster = join(self.folder, f"{iso}_{raster_list[0].replace("GLOBE_", "").replace("R1_C13", "")}")
-                with rasterio.open(country_raster, "w", **out_meta) as dest:
-                    dest.write(mask_raster)
-                dict_of_dicts_add(self.country_data, iso, data_type, country_raster)
+            mosaic_raster, mosaic_transform = merge(files_to_mosaic)
+            mosaic_meta = open_file.meta.copy()
+            mosaic_meta.update(
+                {
+                    "height": mosaic_raster.shape[1],
+                    "width": mosaic_raster.shape[2],
+                    "transform": mosaic_transform,
+                }
+            )
+            with MemoryFile() as memfile:
+                with memfile.open(**mosaic_meta) as dataset:
+                    dataset.write(mosaic_raster)
+                with memfile.open() as dataset:
+                    for row in self.global_data:
+                        iso = row["properties"]["Color_Code"]
+                        if iso[:2] == "XX":
+                            continue
+                        mask_raster, mask_transform = mask(dataset, [row["geometry"]], all_touched=True)
+                        mask_meta = dataset.meta.copy()
+                        mask_meta.update({"transform": mask_transform})
+                        country_raster = f"{raster_list[0].replace('GLOBE_', '')[:-10]}{iso}.tif"
+                        with rasterio.open(country_raster, "w", **mask_meta) as dest:
+                            dest.write(mask_raster)
+                        dict_of_dicts_add(self.country_data, iso, data_type, country_raster)
         return list(self.country_data.keys())
 
     def generate_dataset(self, dataset_name: str) -> Optional[Dataset]:
