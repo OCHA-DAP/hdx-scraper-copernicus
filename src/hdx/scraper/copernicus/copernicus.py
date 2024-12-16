@@ -5,7 +5,7 @@ import logging
 import re
 from json import loads
 from os.path import join
-from typing import List, Optional
+from typing import Dict, List, Optional
 from zipfile import ZipFile
 
 import rasterio
@@ -15,6 +15,7 @@ from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.resource import Resource
 from hdx.location.country import Country
+from hdx.utilities.dateparse import parse_date
 from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 from rasterio import MemoryFile
@@ -98,7 +99,7 @@ class Copernicus:
                 self.global_data[iso] = [row["geometry"]]
             return
 
-    def get_ghs_data(self, current_year: int):
+    def get_ghs_data(self, current_year: int, state_dict: Dict) -> bool:
         file_patterns = self._configuration["file_patterns"]
         base_url = self._configuration["base_url"]
         lines = self.get_lines(base_url, "ghsl_ftp.txt")
@@ -125,7 +126,10 @@ class Copernicus:
             subsubfolder, year = _select_latest_data(
                 _DATA_YEAR_PATTERN, subsubfolders, current_year
             )
+            if year <= state_dict.get(data_type, state_dict["DEFAULT"]).year:
+                return False
             self.data_year[data_type] = year
+            state_dict[data_type] = parse_date(f"{year}-01-01")
             tile_lines = self.get_lines(
                 f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/",
                 filename=f"{subsubfolder.replace("/", "")}.txt",
@@ -139,6 +143,7 @@ class Copernicus:
                 with ZipFile(zip_file_path, "r") as z:
                     file_path = z.extract(f"{zip_file[:-4]}.tif", self._temp_folder)
                 dict_of_lists_add(self.latest_data, data_type, file_path)
+        return True
 
     def process(self) -> List:
         for iso, iso_geometry in self.global_data.items():

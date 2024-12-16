@@ -3,6 +3,7 @@ from os.path import join
 import pytest
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
+from hdx.utilities.dateparse import parse_date
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
@@ -67,16 +68,8 @@ class TestCopernicus:
                     configuration,
                     retriever,
                 )
-                copernicus.get_tiling_schema()
-                assert len(copernicus.tiling_schema) == 375
-                copernicus.get_boundaries()
-                assert list(copernicus.global_data.keys()) == ["CUB", "JAM"]
-                assert copernicus.tiles_by_country == {
-                    "CUB": ["R7_C10", "R7_C11"],
-                    "JAM": ["R7_C11"],
-                }
-
-                copernicus.get_ghs_data(2024)
+                updated = copernicus.get_ghs_data(2024, {"DEFAULT": parse_date("2019-01-01")})
+                assert updated is True
                 assert copernicus.data_year == {"built": 2020, "population": 2020}
                 assert copernicus.latest_data == {
                     "built": [
@@ -99,6 +92,15 @@ class TestCopernicus:
                             "GHS_POP_E2020_GLOBE_R2023A_54009_100_V1_0_R7_C11.tif",
                         ),
                     ],
+                }
+
+                copernicus.get_tiling_schema()
+                assert len(copernicus.tiling_schema) == 375
+                copernicus.get_boundaries()
+                assert list(copernicus.global_data.keys()) == ["CUB", "JAM"]
+                assert copernicus.tiles_by_country == {
+                    "CUB": ["R7_C10", "R7_C11"],
+                    "JAM": ["R7_C11"],
                 }
 
                 copernicus.global_data.pop("JAM")
