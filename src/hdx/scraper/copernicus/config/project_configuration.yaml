@@ -14,3 +14,16 @@ file_patterns:
   population: "GHS_POP_GLOBE"
 
 resolution: 100
+
+tags:
+  - "facilities-infrastructure"
+  - "populated places-settlements"
+  - "population"
+
+resource_info:
+  built:
+    name: "GHS Built-up Surface"
+    description: "Product: GHS-BUILT-S, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide, Classification: total - residential (RES) & non residential (NRES) classification."
+  population:
+    name: "GHS Population Grid"
+    description: "Product: GHS-POP, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide"

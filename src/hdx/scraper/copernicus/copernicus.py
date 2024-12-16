@@ -13,13 +13,15 @@ from bs4 import BeautifulSoup
 from geopandas import overlay, read_file
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
-from hdx.data.hdxobject import HDXError
+from hdx.data.resource import Resource
+from hdx.location.country import Country
 from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 from rasterio import MemoryFile
 from rasterio.mask import mask
 from rasterio.merge import merge
 from shapely.validation import make_valid
+from slugify import slugify
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,7 @@ class Copernicus:
         self.latest_data = {}
         self.latest_data_urls = {}
         self.country_data = {}
+        self.data_year = {}
 
     def get_lines(self, url: str, filename: Optional[str] = None) -> List[str]:
         text = self._retriever.download_text(url, filename=filename)
@@ -104,7 +107,7 @@ class Copernicus:
                 if subfolder_pattern not in subfolder:
                     continue
                 subfolders.append(subfolder)
-            subfolder = _select_latest_data(_MODELED_YEAR_PATTERN, subfolders)
+            subfolder, _ = _select_latest_data(_MODELED_YEAR_PATTERN, subfolders)
             sub_lines = self.get_lines(
                 f"{base_url}{subfolder}",
                 filename=f"{subfolder.replace("/", "")}.txt",
@@ -117,9 +120,10 @@ class Copernicus:
                 if "NRES" in subsubfolder:
                     continue
                 subsubfolders.append(subsubfolder)
-            subsubfolder = _select_latest_data(
+            subsubfolder, year = _select_latest_data(
                 _DATA_YEAR_PATTERN, subsubfolders, current_year
             )
+            self.data_year[data_type] = year
             tile_lines = self.get_lines(
                 f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/",
                 filename=f"{subsubfolder.replace("/", "")}.txt",
@@ -177,49 +181,61 @@ class Copernicus:
                             raster_list[0].replace("GLOBE_", "").split("_")[:-2]
                         )
                         country_raster = f"{file_name}_{iso}.tif"
-                        with rasterio.open(country_raster, "w", **mask_meta) as dest:
+                        with rasterio.open(
+                            country_raster, "w", **mask_meta, compress="LZW"
+                        ) as dest:
                             dest.write(mask_raster)
                         dict_of_dicts_add(
                             self.country_data, iso, data_type, country_raster
                         )
         return list(self.country_data.keys())
 
-    def generate_dataset(self, dataset_name: str) -> Optional[Dataset]:
-        dataset_title = None
-        dataset_time_period = None
-        dataset_tags = None
-        dataset_country_iso3 = None
+    def generate_dataset(self, iso3: str) -> Optional[Dataset]:
+        country_name = Country.get_country_name_from_iso3(iso3)
+        if not country_name:
+            logger.error(f"Couldn't find country {iso3}, skipping")
+            return None
+        dataset_name = slugify(f"{iso3}-ghsl")
+        dataset_title = f"{country_name}: Copernicus Global Human Settlement Layer (GHSL)"
 
-        # Dataset info
         dataset = Dataset(
             {
                 "name": dataset_name,
                 "title": dataset_title,
             }
         )
-
-        dataset.set_time_period(dataset_time_period)
+        time_period = [value for _, value in self.data_year.items()]
+        dataset.set_time_period_year_range(min(time_period), max(time_period))
+        dataset_tags = self._configuration["tags"]
         dataset.add_tags(dataset_tags)
-        # Only if needed
-        dataset.set_subnational(True)
-        try:
-            dataset.add_country_location(dataset_country_iso3)
-        except HDXError:
-            logger.error(f"Couldn't find country {dataset_country_iso3}, skipping")
-            return
+        dataset.add_country_location(iso3)
 
-        # Add resources here
+        resource_info = self._configuration["resource_info"]
+        for data_type, file_to_upload in self.country_data[iso3].items():
+            resource_desc = resource_info[data_type]["description"].replace(
+                "YYYY", self.data_year[data_type]
+            )
+            resource = Resource(
+                {
+                    "name": resource_info[data_type]["name"],
+                    "description": resource_desc,
+                }
+            )
+            resource.set_format("GeoTiff")
+            resource.set_file_to_upload(self.country_data[iso3]["built"])
+            dataset.add_update_resource(resource)
 
         return dataset
 
 
 def _select_latest_data(
     pattern: str, files: List[str], max_year: Optional[int] = None
-) -> str:
+) -> (int, str):
     year_matches = [re.findall(pattern, f, re.IGNORECASE) for f in files]
     year_matches = [int(y[0][1:]) if len(y) > 0 else 0 for y in year_matches]
     if max_year:
         year_matches = [y if y <= max_year else 0 for y in year_matches]
-    max_index = year_matches.index(max(year_matches))
+    max_year = max(year_matches)
+    max_index = year_matches.index(max_year)
     latest_data = files[max_index]
-    return latest_data
+    return latest_data, max_year
