@@ -38,7 +38,6 @@ class Copernicus:
         self.global_data = {}
         self.tiles_by_country = {}
         self.latest_data = {}
-        self.latest_data_urls = {}
         self.country_data = {}
         self.data_year = {}
 
@@ -133,7 +132,6 @@ class Copernicus:
                 if ".zip" not in zip_file:
                     continue
                 zip_url = f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/{zip_file}"
-                dict_of_lists_add(self.latest_data_urls, data_type, zip_url)
                 zip_file_path = self._retriever.download_file(zip_url)
                 if self._retriever.use_saved:
                     file_path = join(self.folder, f"{zip_file[:-4]}.tif")
