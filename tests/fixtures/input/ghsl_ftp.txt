@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /ftp/jrc-opendata/GHSL</title>
+ </head>
+ <body>
+<h1>Index of /ftp/jrc-opendata/GHSL</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=D">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/back.gif" alt="[PARENTDIR]"></td><td><a href="/ftp/jrc-opendata/">Parent Directory</a></td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="ESM_BUILT_VHR2015_Europe_R2019/">ESM_BUILT_VHR2015_Europe_R2019/</a></td><td align="right">2024-10-25 13:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="ESM_BUILT_VHR2018_Europe_R2020/">ESM_BUILT_VHR2018_Europe_R2020/</a></td><td align="right">2022-07-07 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_C_GLOBE_R2022A/">GHS_BUILT_C_GLOBE_R2022A/</a></td><td align="right">2022-06-25 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_C_GLOBE_R2023A/">GHS_BUILT_C_GLOBE_R2023A/</a></td><td align="right">2024-01-10 15:14  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_H_GLOBE_R2022A/">GHS_BUILT_H_GLOBE_R2022A/</a></td><td align="right">2022-06-25 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_H_GLOBE_R2023A/">GHS_BUILT_H_GLOBE_R2023A/</a></td><td align="right">2024-01-10 15:14  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_LAU2STAT_EUROPE_R2022A/">GHS_BUILT_LAU2STAT_EUROPE_R2022A/</a></td><td align="right">2022-06-25 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_LAUSTAT_EUROPE_R2023A/">GHS_BUILT_LAUSTAT_EUROPE_R2023A/</a></td><td align="right">2024-01-10 15:14  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_LDSMTCNFD_GLOBE_R2015B/">GHS_BUILT_LDSMTCNFD_GLOBE_R2015B/</a></td><td align="right">2022-06-24 17:25  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_LDSMTDM_GLOBE_R2015B/">GHS_BUILT_LDSMTDM_GLOBE_R2015B/</a></td><td align="right">2022-06-24 17:25  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_LDSMTIDC_GLOBE_R2018A/">GHS_BUILT_LDSMTIDC_GLOBE_R2018A/</a></td><td align="right">2022-06-24 17:25  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_LDSMT_GLOBE_R2015B/">GHS_BUILT_LDSMT_GLOBE_R2015B/</a></td><td align="right">2019-12-10 16:25  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_LDSMT_GLOBE_R2018A/">GHS_BUILT_LDSMT_GLOBE_R2018A/</a></td><td align="right">2022-06-24 17:24  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_S1NODSM_GLOBE_R2018A/">GHS_BUILT_S1NODSM_GLOBE_R2018A/</a></td><td align="right">2022-06-24 17:25  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_S2comp2018_GLOBE_R2020A/">GHS_BUILT_S2comp2018_GLOBE_R2020A/</a></td><td align="right">2022-06-24 17:30  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_S_GLOBE_R2022A/">GHS_BUILT_S_GLOBE_R2022A/</a></td><td align="right">2022-06-25 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_S_GLOBE_R2023A/">GHS_BUILT_S_GLOBE_R2023A/</a></td><td align="right">2024-02-05 10:45  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_V_GLOBE_R2022A/">GHS_BUILT_V_GLOBE_R2022A/</a></td><td align="right">2022-06-25 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_BUILT_V_GLOBE_R2023A/">GHS_BUILT_V_GLOBE_R2023A/</a></td><td align="right">2024-01-10 15:14  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_COUNTRY_STATS_MT_GLOBE_R2024A/">GHS_COUNTRY_STATS_MT_GLOBE_R2024A/</a></td><td align="right">2024-10-12 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_DUC_GLOBE_R2022A/">GHS_DUC_GLOBE_R2022A/</a></td><td align="right">2024-01-10 15:14  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_DUC_GLOBE_R2023A/">GHS_DUC_GLOBE_R2023A/</a></td><td align="right">2024-07-08 09:17  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_FUA_UCDB2015_GLOBE_R2019A/">GHS_FUA_UCDB2015_GLOBE_R2019A/</a></td><td align="right">2019-12-06 13:30  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_LAND_GLOBE_R2022A/">GHS_LAND_GLOBE_R2022A/</a></td><td align="right">2022-06-25 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_POP_EUROSTAT_EUROPE_R2016A/">GHS_POP_EUROSTAT_EUROPE_R2016A/</a></td><td align="right">2022-06-24 17:33  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_POP_GLOBE_R2022A/">GHS_POP_GLOBE_R2022A/</a></td><td align="right">2022-06-25 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_POP_GLOBE_R2023A/">GHS_POP_GLOBE_R2023A/</a></td><td align="right">2024-01-10 15:14  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_POP_GPW4_GLOBE_R2015A/">GHS_POP_GPW4_GLOBE_R2015A/</a></td><td align="right">2019-12-10 16:26  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_POP_MT_GLOBE_R2019A/">GHS_POP_MT_GLOBE_R2019A/</a></td><td align="right">2022-06-24 17:30  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_SDATA_GLOBE_R2022A/">GHS_SDATA_GLOBE_R2022A/</a></td><td align="right">2024-01-10 15:14  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_SDATA_GLOBE_R2023A/">GHS_SDATA_GLOBE_R2023A/</a></td><td align="right">2024-01-10 15:14  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_SMOD_GLOBE_R2022A/">GHS_SMOD_GLOBE_R2022A/</a></td><td align="right">2022-06-25 02:50  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_SMOD_GLOBE_R2023A/">GHS_SMOD_GLOBE_R2023A/</a></td><td align="right">2024-07-08 10:20  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_SMOD_POP_GLOBE_R2016A/">GHS_SMOD_POP_GLOBE_R2016A/</a></td><td align="right">2022-06-24 17:31  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_SMOD_POP_GLOBE_R2019A/">GHS_SMOD_POP_GLOBE_R2019A/</a></td><td align="right">2022-06-24 17:31  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_STAT_DUCMT_GLOBE_R2019A/">GHS_STAT_DUCMT_GLOBE_R2019A/</a></td><td align="right">2022-06-24 17:31  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_STAT_UCDB2015MT_GLOBE_R2019A/">GHS_STAT_UCDB2015MT_GLOBE_R2019A/</a></td><td align="right">2020-04-07 15:10  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_UCDB_GLOBE_R2024A/">GHS_UCDB_GLOBE_R2024A/</a></td><td align="right">2024-11-19 09:51  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="GHS_composite_S2_L1C_2017-2018_GLOBE_R2020A/">GHS_composite_S2_L1C_2017-2018_GLOBE_R2020A/</a></td><td align="right">2021-03-04 16:12  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="copyright.txt">copyright.txt</a></td><td align="right">2024-01-10 15:04  </td><td align="right">540 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="old_metadata_versions/">old_metadata_versions/</a></td><td align="right">2019-03-05 14:49  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>
