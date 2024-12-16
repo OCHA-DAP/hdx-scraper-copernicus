@@ -63,6 +63,7 @@ def main(
                 configuration,
                 retriever,
             )
+            copernicus.get_tiling_schema()
             copernicus.get_boundaries()
             copernicus.get_ghs_data(year)
             iso3s_to_upload = copernicus.process()

@@ -10,14 +10,12 @@ from zipfile import ZipFile
 
 import rasterio
 from bs4 import BeautifulSoup
-from geopandas import GeoDataFrame, read_file
+from geopandas import overlay, read_file
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
-from rasterio import MemoryFile
-from rasterio.mask import mask
 from rasterio.merge import merge
 from shapely.validation import make_valid
 
@@ -32,7 +30,9 @@ class Copernicus:
         self._configuration = configuration
         self._retriever = retriever
         self.folder = retriever.saved_dir if retriever.save else retriever.temp_dir
-        self.global_data = GeoDataFrame()
+        self.tiling_schema = None
+        self.global_data = {}
+        self.tiles_by_country = {}
         self.latest_data = {}
         self.latest_data_urls = {}
         self.country_data = {}
@@ -42,6 +42,20 @@ class Copernicus:
         soup = BeautifulSoup(text, "html.parser")
         lines = soup.find_all("a")
         return lines
+
+    def get_tiling_schema(self):
+        url = self._configuration["tiling_schema"]["url"]
+        zip_file_path = self._retriever.download_file(url)
+        if not self._retriever.use_saved:
+            with ZipFile(zip_file_path, "r") as z:
+                z.extractall(self.folder)
+        file_path = join(self.folder, self._configuration["tiling_schema"]["filename"])
+        lyr = read_file(file_path)
+        lyr = lyr.drop(
+            [f for f in lyr.columns if f.lower() not in ["tile_id", "geometry"]],
+            axis=1,
+        )
+        self.tiling_schema = lyr
 
     def get_boundaries(self):
         dataset = Dataset.read_from_hdx(self._configuration["boundary_dataset"])
@@ -61,8 +75,20 @@ class Copernicus:
                 [f for f in lyr.columns if f.lower() not in ["color_code", "geometry"]],
                 axis=1,
             )
+            joined_lyr = overlay(self.tiling_schema, lyr, how="intersection")
+            for i, row in joined_lyr.iterrows():
+                iso = row["Color_Code"]
+                if iso[:2] == "XX":
+                    continue
+                dict_of_lists_add(
+                    self.tiles_by_country, row["Color_Code"], row["tile_id"]
+                )
             lyr = loads(lyr.to_json())["features"]
-            self.global_data = lyr
+            for row in lyr:
+                iso = row["properties"]["Color_Code"]
+                if iso[:2] == "XX":
+                    continue
+                self.global_data[iso] = [row["geometry"]]
             return
 
     def get_ghs_data(self, current_year: int):
@@ -111,41 +137,30 @@ class Copernicus:
                 dict_of_lists_add(self.latest_data, data_type, file_path)
 
     def process(self) -> List:
-        for data_type, raster_list in self.latest_data.items():
-            files_to_mosaic = []
-            for raster_file in raster_list:
-                open_file = rasterio.open(raster_file)
-                files_to_mosaic.append(open_file)
-            mosaic_raster, mosaic_transform = merge(files_to_mosaic)
-            mosaic_meta = open_file.meta.copy()
-            mosaic_meta.update(
-                {
-                    "height": mosaic_raster.shape[1],
-                    "width": mosaic_raster.shape[2],
-                    "transform": mosaic_transform,
-                }
-            )
-            with MemoryFile() as memfile:
-                with memfile.open(**mosaic_meta) as dataset:
-                    dataset.write(mosaic_raster)
-                with memfile.open() as dataset:
-                    for row in self.global_data:
-                        iso = row["properties"]["Color_Code"]
-                        if iso[:2] == "XX":
-                            continue
-                        mask_raster, mask_transform = mask(
-                            dataset, [row["geometry"]], all_touched=True
-                        )
-                        mask_meta = dataset.meta.copy()
-                        mask_meta.update({"transform": mask_transform})
-                        country_raster = (
-                            f"{raster_list[0].replace('GLOBE_', '')[:-10]}{iso}.tif"
-                        )
-                        with rasterio.open(country_raster, "w", **mask_meta) as dest:
-                            dest.write(mask_raster)
-                        dict_of_dicts_add(
-                            self.country_data, iso, data_type, country_raster
-                        )
+        for iso, iso_geometry in self.global_data.items():
+            iso_tiles = self.tiles_by_country[iso]
+            for data_type, raster_list in self.latest_data.items():
+                files_to_mosaic = []
+                for raster_file in raster_list:
+                    tile = "_".join(raster_file.split(".")[0].split("_")[-2:])
+                    if tile not in iso_tiles:
+                        continue
+                    open_file = rasterio.open(raster_file)
+                    files_to_mosaic.append(open_file)
+                mosaic_raster, mosaic_transform = merge(files_to_mosaic)
+                mosaic_meta = open_file.meta.copy()
+                mosaic_meta.update(
+                    {
+                        "height": mosaic_raster.shape[1],
+                        "width": mosaic_raster.shape[2],
+                        "transform": mosaic_transform,
+                    }
+                )
+                file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
+                country_raster = f"{file_name}_{iso}.tif"
+                with rasterio.open(country_raster, "w", **mosaic_meta) as dest:
+                    dest.write(mosaic_raster)
+                dict_of_dicts_add(self.country_data, iso, data_type, country_raster)
         return list(self.country_data.keys())
 
     def generate_dataset(self, dataset_name: str) -> Optional[Dataset]:

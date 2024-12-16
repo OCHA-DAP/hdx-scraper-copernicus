@@ -5,6 +5,10 @@ boundary_resource: "polbnda_int_15m"
 
 base_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
 
+tiling_schema:
+  url: "https://ghsl.jrc.ec.europa.eu/download/GHSL_data_54009_shapefile.zip"
+  filename: "GHSL2_0_MWD_L1_tile_schema_land.shp"
+
 file_patterns:
   built: "GHS_BUILT_S_GLOBE"
   population: "GHS_POP_GLOBE"
