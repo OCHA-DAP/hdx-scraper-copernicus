@@ -16,6 +16,8 @@ from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
+from rasterio import MemoryFile
+from rasterio.mask import mask
 from rasterio.merge import merge
 from shapely.validation import make_valid
 
@@ -156,11 +158,30 @@ class Copernicus:
                         "transform": mosaic_transform,
                     }
                 )
-                file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
-                country_raster = f"{file_name}_{iso}.tif"
-                with rasterio.open(country_raster, "w", **mosaic_meta) as dest:
-                    dest.write(mosaic_raster)
-                dict_of_dicts_add(self.country_data, iso, data_type, country_raster)
+                with MemoryFile() as memfile:
+                    with memfile.open(**mosaic_meta) as dataset:
+                        dataset.write(mosaic_raster)
+                    with memfile.open() as dataset:
+                        mask_raster, mask_transform = mask(
+                            dataset, iso_geometry, all_touched=True, crop=True
+                        )
+                        mask_meta = dataset.meta.copy()
+                        mask_meta.update(
+                            {
+                                "height": mask_raster.shape[1],
+                                "width": mask_raster.shape[2],
+                                "transform": mask_transform,
+                            }
+                        )
+                        file_name = "_".join(
+                            raster_list[0].replace("GLOBE_", "").split("_")[:-2]
+                        )
+                        country_raster = f"{file_name}_{iso}.tif"
+                        with rasterio.open(country_raster, "w", **mask_meta) as dest:
+                            dest.write(mask_raster)
+                        dict_of_dicts_add(
+                            self.country_data, iso, data_type, country_raster
+                        )
         return list(self.country_data.keys())
 
     def generate_dataset(self, dataset_name: str) -> Optional[Dataset]:
