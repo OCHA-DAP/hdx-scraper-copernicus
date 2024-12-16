@@ -16,6 +16,14 @@ attrs==24.3.0
     #   jsonschema
     #   rasterio
     #   referencing
+beautifulsoup4==4.12.3
+    # via
+    #   -c requirements.txt
+    #   bs4
+bs4==0.0.2
+    # via
+    #   -c requirements.txt
+    #   hdx-scraper-copernicus (pyproject.toml)
 certifi==2024.12.14
     # via
     #   -c requirements.txt
@@ -353,6 +361,10 @@ six==1.16.0
     #   pockets
     #   python-dateutil
     #   sphinxcontrib-napoleon
+soupsieve==2.6
+    # via
+    #   -c requirements.txt
+    #   beautifulsoup4
 sphinxcontrib-napoleon==0.7
     # via
     #   -c requirements.txt

@@ -42,9 +42,7 @@ def main(
     """
     configuration = Configuration.read()
     if not User.check_current_user_organization_access("copernicus", "create_dataset"):
-        raise PermissionError(
-            "API Token does not give access to Copernicus organisation!"
-        )
+        raise PermissionError("API Token does not give access to Copernicus organisation!")
 
     with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
         temp_dir = info["folder"]
@@ -87,7 +85,5 @@ if __name__ == "__main__":
         main,
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=_USER_AGENT_LOOKUP,
-        project_config_yaml=join(
-            dirname(__file__), "config", "project_configuration.yaml"
-        ),
+        project_config_yaml=join(dirname(__file__), "config", "project_configuration.yaml"),
     )

@@ -67,7 +67,9 @@ class Copernicus:
             if self._configuration["boundary_resource"] not in resource["name"]:
                 continue
             if self._retriever.use_saved:
-                file_path = self._retriever.download_file(resource["url"])
+                file_path = self._retriever.download_file(
+                    resource["url"], filename=resource["name"]
+                )
             else:
                 folder = self._retriever.saved_dir if self._retriever.save else self._temp_folder
                 _, file_path = resource.download(folder)
@@ -87,9 +89,7 @@ class Copernicus:
                 iso = row["Color_Code"]
                 if iso[:2] == "XX":
                     continue
-                dict_of_lists_add(
-                    self.tiles_by_country, row["Color_Code"], row["tile_id"]
-                )
+                dict_of_lists_add(self.tiles_by_country, row["Color_Code"], row["tile_id"])
             lyr = loads(lyr.to_json())["features"]
             for row in lyr:
                 iso = row["properties"]["Color_Code"]
@@ -175,17 +175,13 @@ class Copernicus:
                                 "transform": mask_transform,
                             }
                         )
-                        file_name = "_".join(
-                            raster_list[0].replace("GLOBE_", "").split("_")[:-2]
-                        )
+                        file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
                         country_raster = f"{file_name}_{iso}.tif"
                         with rasterio.open(
                             country_raster, "w", **mask_meta, compress="LZW"
                         ) as dest:
                             dest.write(mask_raster)
-                        dict_of_dicts_add(
-                            self.country_data, iso, data_type, country_raster
-                        )
+                        dict_of_dicts_add(self.country_data, iso, data_type, country_raster)
         return list(self.country_data.keys())
 
     def generate_dataset(self, iso3: str) -> Optional[Dataset]:
@@ -211,7 +207,7 @@ class Copernicus:
         resource_info = self._configuration["resource_info"]
         for data_type, file_to_upload in self.country_data[iso3].items():
             resource_desc = resource_info[data_type]["description"].replace(
-                "YYYY", self.data_year[data_type]
+                "YYYY", str(self.data_year[data_type])
             )
             resource = Resource(
                 {

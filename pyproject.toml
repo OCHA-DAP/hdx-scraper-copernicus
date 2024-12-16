@@ -12,6 +12,7 @@ build-backend = "hatchling.build"
 name = "hdx-scraper-copernicus"
 requires-python = ">=3.12"
 dependencies = [
+  "bs4",
   "geopandas",
   "hdx-python-api",
   "hdx-python-utilities",

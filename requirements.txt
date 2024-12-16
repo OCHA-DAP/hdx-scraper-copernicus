@@ -11,6 +11,10 @@ attrs==24.3.0
     #   jsonschema
     #   rasterio
     #   referencing
+beautifulsoup4==4.12.3
+    # via bs4
+bs4==0.0.2
+    # via hdx-scraper-copernicus (pyproject.toml)
 certifi==2024.12.14
     # via
     #   pyogrio
@@ -206,6 +210,8 @@ six==1.16.0
     #   pockets
     #   python-dateutil
     #   sphinxcontrib-napoleon
+soupsieve==2.6
+    # via beautifulsoup4
 sphinxcontrib-napoleon==0.7
     # via defopt
 stringcase==1.2.0
