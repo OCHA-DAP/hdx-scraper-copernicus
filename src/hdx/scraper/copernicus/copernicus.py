@@ -33,7 +33,7 @@ class Copernicus:
     def __init__(self, configuration: Configuration, retriever: Retrieve):
         self._configuration = configuration
         self._retriever = retriever
-        self.folder = retriever.saved_dir if retriever.save else retriever.temp_dir
+        self._temp_folder = retriever.temp_dir
         self.tiling_schema = None
         self.global_data = {}
         self.tiles_by_country = {}
@@ -50,10 +50,9 @@ class Copernicus:
     def get_tiling_schema(self):
         url = self._configuration["tiling_schema"]["url"]
         zip_file_path = self._retriever.download_file(url)
-        if not self._retriever.use_saved:
-            with ZipFile(zip_file_path, "r") as z:
-                z.extractall(self.folder)
-        file_path = join(self.folder, self._configuration["tiling_schema"]["filename"])
+        with ZipFile(zip_file_path, "r") as z:
+            z.extractall(self._temp_folder)
+        file_path = join(self._temp_folder, self._configuration["tiling_schema"]["filename"])
         lyr = read_file(file_path)
         lyr = lyr.drop(
             [f for f in lyr.columns if f.lower() not in ["tile_id", "geometry"]],
@@ -67,7 +66,11 @@ class Copernicus:
         for resource in resources:
             if self._configuration["boundary_resource"] not in resource["name"]:
                 continue
-            _, file_path = resource.download(self.folder)
+            if self._retriever.use_saved:
+                file_path = self._retriever.download_file(resource["url"])
+            else:
+                folder = self._retriever.saved_dir if self._retriever.save else self._temp_folder
+                _, file_path = resource.download(folder)
             lyr = read_file(file_path)
             lyr = lyr.to_crs(crs="ESRI:54009")
             for i, _ in lyr.iterrows():
@@ -133,11 +136,8 @@ class Copernicus:
                     continue
                 zip_url = f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/{zip_file}"
                 zip_file_path = self._retriever.download_file(zip_url)
-                if self._retriever.use_saved:
-                    file_path = join(self.folder, f"{zip_file[:-4]}.tif")
-                else:
-                    with ZipFile(zip_file_path, "r") as z:
-                        file_path = z.extract(f"{zip_file[:-4]}.tif", self.folder)
+                with ZipFile(zip_file_path, "r") as z:
+                    file_path = z.extract(f"{zip_file[:-4]}.tif", self._temp_folder)
                 dict_of_lists_add(self.latest_data, data_type, file_path)
 
     def process(self) -> List:
