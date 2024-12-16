@@ -1,9 +1,9 @@
-# Collector for copernicus Datasets
+# Collector for Copernicus Datasets
 [![Build Status](https://github.com/OCHA-DAP/hdx-scraper-copernicus/actions/workflows/run-python-tests.yaml/badge.svg)](https://github.com/OCHA-DAP/hdx-scraper-copernicus/actions/workflows/run-python-tests.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-copernicus/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-copernicus?branch=main)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-This script ...
+This script downloads data from the [GHSL FTP](https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/) and processes it into country level datasets on HDX. It downloads around 700 files from the FTP, one boundary file from HDX, and makes around 200 update calls to HDX.
 
 ## Development
 
