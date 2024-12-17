@@ -224,7 +224,7 @@ class Copernicus:
                 }
             )
             resource.set_format("GeoTiff")
-            resource.set_file_to_upload(self.country_data[iso3]["built"])
+            resource.set_file_to_upload(self.country_data[iso3][data_type])
             dataset.add_update_resource(resource)
 
         return dataset
