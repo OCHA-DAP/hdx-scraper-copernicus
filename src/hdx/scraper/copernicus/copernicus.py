@@ -145,8 +145,14 @@ class Copernicus:
                 dict_of_lists_add(self.latest_data, data_type, file_path)
         return True
 
-    def process(self) -> List:
+    def process(self, isos_to_process: Optional[List[str]] = None) -> List:
         for iso, iso_geometry in self.global_data.items():
+            if isos_to_process and iso not in isos_to_process:
+                continue
+            country_name = Country.get_country_name_from_iso3(iso)
+            if not country_name:
+                logger.error(f"Couldn't find country {iso}, skipping")
+                continue
             iso_tiles = self.tiles_by_country[iso]
             for data_type, raster_list in self.latest_data.items():
                 files_to_mosaic = []
@@ -191,9 +197,6 @@ class Copernicus:
 
     def generate_dataset(self, iso3: str) -> Optional[Dataset]:
         country_name = Country.get_country_name_from_iso3(iso3)
-        if not country_name:
-            logger.error(f"Couldn't find country {iso3}, skipping")
-            return None
         dataset_name = slugify(f"{iso3}-ghsl")
         dataset_title = f"{country_name}: Copernicus Global Human Settlement Layer (GHSL)"
 
