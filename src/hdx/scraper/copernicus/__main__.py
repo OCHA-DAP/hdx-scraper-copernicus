@@ -80,6 +80,7 @@ def main(
                         dataset.update_from_yaml(
                             path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
                         )
+                        dataset["notes"] = dataset["notes"].replace("\n", "  \n")
                         dataset.create_in_hdx(
                             remove_additional_resources=True,
                             match_resource_order=False,
