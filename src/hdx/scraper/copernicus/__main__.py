@@ -72,10 +72,12 @@ def main(
                 updated = copernicus.get_ghs_data(year, state_dict)
                 if updated:
                     copernicus.get_tiling_schema()
-                    copernicus.get_boundaries()
-                    iso3s_to_upload = copernicus.process()
+                    iso3s = copernicus.get_boundaries()
 
-                    for iso3 in iso3s_to_upload:
+                    for iso3 in iso3s:
+                        country_data = copernicus.process(iso3)
+                        if not country_data:
+                            continue
                         dataset = copernicus.generate_dataset(iso3)
                         dataset.update_from_yaml(
                             path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")

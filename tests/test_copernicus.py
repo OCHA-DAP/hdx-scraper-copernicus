@@ -96,24 +96,20 @@ class TestCopernicus:
 
                 copernicus.get_tiling_schema()
                 assert len(copernicus.tiling_schema) == 375
-                copernicus.get_boundaries()
-                assert list(copernicus.global_data.keys()) == ["CUB", "JAM"]
+                iso3s = copernicus.get_boundaries()
+                assert iso3s == ["CUB", "JAM"]
                 assert copernicus.tiles_by_country == {
                     "CUB": ["R7_C10", "R7_C11"],
                     "JAM": ["R7_C11"],
                 }
 
-                copernicus.global_data.pop("JAM")
-                iso3s_to_upload = copernicus.process()
-                assert iso3s_to_upload == ["CUB"]
-                assert copernicus.country_data == {
-                    "CUB": {
-                        "built": join(tempdir, "GHS_BUILT_S_E2020_R2023A_54009_100_V1_0_CUB.tif"),
-                        "population": join(tempdir, "GHS_POP_E2020_R2023A_54009_100_V1_0_CUB.tif"),
-                    }
+                country_data = copernicus.process("CUB")
+                assert country_data == {
+                    "built": join(tempdir, "GHS_BUILT_S_E2020_R2023A_54009_100_V1_0_CUB.tif"),
+                    "population": join(tempdir, "GHS_POP_E2020_R2023A_54009_100_V1_0_CUB.tif"),
                 }
 
-                dataset = copernicus.generate_dataset(iso3s_to_upload[0])
+                dataset = copernicus.generate_dataset("CUB")
                 dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
                 assert dataset == {
                     "name": "cub-ghsl",

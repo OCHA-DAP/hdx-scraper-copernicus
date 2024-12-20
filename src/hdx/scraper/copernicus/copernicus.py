@@ -97,7 +97,7 @@ class Copernicus:
                 if iso[:2] == "XX":
                     continue
                 self.global_data[iso] = [row["geometry"]]
-            return
+            return list(self.global_data.keys())
 
     def get_ghs_data(self, current_year: int, state_dict: Dict) -> bool:
         file_patterns = self._configuration["file_patterns"]
@@ -145,55 +145,52 @@ class Copernicus:
                 dict_of_lists_add(self.latest_data, data_type, file_path)
         return True
 
-    def process(self, isos_to_process: Optional[List[str]] = None) -> List:
-        for iso, iso_geometry in self.global_data.items():
-            if isos_to_process and iso not in isos_to_process:
-                continue
-            country_name = Country.get_country_name_from_iso3(iso)
-            if not country_name:
-                logger.error(f"Couldn't find country {iso}, skipping")
-                continue
-            iso_tiles = self.tiles_by_country[iso]
-            for data_type, raster_list in self.latest_data.items():
-                files_to_mosaic = []
-                for raster_file in raster_list:
-                    tile = "_".join(raster_file.split(".")[0].split("_")[-2:])
-                    if tile not in iso_tiles:
-                        continue
-                    open_file = rasterio.open(raster_file)
-                    files_to_mosaic.append(open_file)
-                mosaic_raster, mosaic_transform = merge(files_to_mosaic)
-                mosaic_meta = open_file.meta.copy()
-                mosaic_meta.update(
-                    {
-                        "height": mosaic_raster.shape[1],
-                        "width": mosaic_raster.shape[2],
-                        "transform": mosaic_transform,
-                    }
-                )
-                with MemoryFile() as memfile:
-                    with memfile.open(**mosaic_meta) as dataset:
-                        dataset.write(mosaic_raster)
-                    with memfile.open() as dataset:
-                        mask_raster, mask_transform = mask(
-                            dataset, iso_geometry, all_touched=True, crop=True
-                        )
-                        mask_meta = dataset.meta.copy()
-                        mask_meta.update(
-                            {
-                                "height": mask_raster.shape[1],
-                                "width": mask_raster.shape[2],
-                                "transform": mask_transform,
-                            }
-                        )
-                        file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
-                        country_raster = f"{file_name}_{iso}.tif"
-                        with rasterio.open(
-                            country_raster, "w", **mask_meta, compress="LZW"
-                        ) as dest:
-                            dest.write(mask_raster)
-                        dict_of_dicts_add(self.country_data, iso, data_type, country_raster)
-        return list(self.country_data.keys())
+    def process(self, iso3: str) -> Dict | None:
+        logger.info(f"Processing {iso3}")
+        country_name = Country.get_country_name_from_iso3(iso3)
+        if not country_name:
+            logger.error(f"Couldn't find country {iso3}, skipping")
+            return None
+        iso_geometry = self.global_data[iso3]
+        iso_tiles = self.tiles_by_country[iso3]
+        for data_type, raster_list in self.latest_data.items():
+            files_to_mosaic = []
+            for raster_file in raster_list:
+                tile = "_".join(raster_file.split(".")[0].split("_")[-2:])
+                if tile not in iso_tiles:
+                    continue
+                open_file = rasterio.open(raster_file)
+                files_to_mosaic.append(open_file)
+            mosaic_raster, mosaic_transform = merge(files_to_mosaic)
+            mosaic_meta = open_file.meta.copy()
+            mosaic_meta.update(
+                {
+                    "height": mosaic_raster.shape[1],
+                    "width": mosaic_raster.shape[2],
+                    "transform": mosaic_transform,
+                }
+            )
+            with MemoryFile() as memfile:
+                with memfile.open(**mosaic_meta) as dataset:
+                    dataset.write(mosaic_raster)
+                with memfile.open() as dataset:
+                    mask_raster, mask_transform = mask(
+                        dataset, iso_geometry, all_touched=True, crop=True
+                    )
+                    mask_meta = dataset.meta.copy()
+                    mask_meta.update(
+                        {
+                            "height": mask_raster.shape[1],
+                            "width": mask_raster.shape[2],
+                            "transform": mask_transform,
+                        }
+                    )
+                    file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
+                    country_raster = f"{file_name}_{iso3}.tif"
+                    with rasterio.open(country_raster, "w", **mask_meta, compress="LZW") as dest:
+                        dest.write(mask_raster)
+                    dict_of_dicts_add(self.country_data, iso3, data_type, country_raster)
+        return self.country_data[iso3]
 
     def generate_dataset(self, iso3: str) -> Optional[Dataset]:
         country_name = Country.get_country_name_from_iso3(iso3)
