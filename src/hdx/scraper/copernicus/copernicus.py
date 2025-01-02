@@ -18,7 +18,6 @@ from hdx.location.country import Country
 from hdx.utilities.dateparse import parse_date
 from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
-from rasterio import MemoryFile
 from rasterio.mask import mask
 from rasterio.merge import merge
 from shapely.validation import make_valid
@@ -170,26 +169,26 @@ class Copernicus:
                     "transform": mosaic_transform,
                 }
             )
-            with MemoryFile() as memfile:
-                with memfile.open(**mosaic_meta) as dataset:
-                    dataset.write(mosaic_raster)
-                with memfile.open() as dataset:
-                    mask_raster, mask_transform = mask(
-                        dataset, iso_geometry, all_touched=True, crop=True
-                    )
-                    mask_meta = dataset.meta.copy()
-                    mask_meta.update(
-                        {
-                            "height": mask_raster.shape[1],
-                            "width": mask_raster.shape[2],
-                            "transform": mask_transform,
-                        }
-                    )
-                    file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
-                    country_raster = f"{file_name}_{iso3}.tif"
-                    with rasterio.open(country_raster, "w", **mask_meta, compress="LZW") as dest:
-                        dest.write(mask_raster)
-                    dict_of_dicts_add(self.country_data, iso3, data_type, country_raster)
+            mosaic_file = join(self._temp_folder, f"mosaic_{data_type}_{iso3}.tif")
+            with rasterio.open(mosaic_file, "w", **mosaic_meta, compress="LZW") as dest:
+                dest.write(mosaic_raster)
+            with rasterio.open(mosaic_file, "r") as dataset:
+                mask_raster, mask_transform = mask(
+                    dataset, iso_geometry, all_touched=True, crop=True
+                )
+                mask_meta = dataset.meta.copy()
+            mask_meta.update(
+                {
+                    "height": mask_raster.shape[1],
+                    "width": mask_raster.shape[2],
+                    "transform": mask_transform,
+                }
+            )
+            file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
+            country_raster = f"{file_name}_{iso3}.tif"
+            with rasterio.open(country_raster, "w", **mask_meta, compress="LZW") as dest:
+                dest.write(mask_raster)
+            dict_of_dicts_add(self.country_data, iso3, data_type, country_raster)
         return self.country_data[iso3]
 
     def generate_dataset(self, iso3: str) -> Optional[Dataset]:
