@@ -158,7 +158,22 @@ class Copernicus:
                 tile = "_".join(raster_file.split(".")[0].split("_")[-2:])
                 if tile not in iso_tiles:
                     continue
-                open_file = rasterio.open(raster_file)
+                with rasterio.open(raster_file, "r") as dataset:
+                    mask_raster, mask_transform = mask(
+                        dataset, iso_geometry, all_touched=True, crop=True
+                    )
+                    mask_meta = dataset.meta.copy()
+                mask_meta.update(
+                    {
+                        "height": mask_raster.shape[1],
+                        "width": mask_raster.shape[2],
+                        "transform": mask_transform,
+                    }
+                )
+                country_file = raster_file.replace("GLOBE_", "")[:-4] + f"_{iso3}.tif"
+                with rasterio.open(country_file, "w", **mask_meta, compress="LZW") as dest:
+                    dest.write(mask_raster)
+                open_file = rasterio.open(country_file)
                 files_to_mosaic.append(open_file)
             mosaic_raster, mosaic_transform = merge(files_to_mosaic)
             mosaic_meta = open_file.meta.copy()
@@ -169,26 +184,11 @@ class Copernicus:
                     "transform": mosaic_transform,
                 }
             )
-            mosaic_file = join(self._temp_folder, f"mosaic_{data_type}_{iso3}.tif")
+            file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
+            mosaic_file = f"{file_name}_{iso3}.tif"
             with rasterio.open(mosaic_file, "w", **mosaic_meta, compress="LZW") as dest:
                 dest.write(mosaic_raster)
-            with rasterio.open(mosaic_file, "r") as dataset:
-                mask_raster, mask_transform = mask(
-                    dataset, iso_geometry, all_touched=True, crop=True
-                )
-                mask_meta = dataset.meta.copy()
-            mask_meta.update(
-                {
-                    "height": mask_raster.shape[1],
-                    "width": mask_raster.shape[2],
-                    "transform": mask_transform,
-                }
-            )
-            file_name = "_".join(raster_list[0].replace("GLOBE_", "").split("_")[:-2])
-            country_raster = f"{file_name}_{iso3}.tif"
-            with rasterio.open(country_raster, "w", **mask_meta, compress="LZW") as dest:
-                dest.write(mask_raster)
-            dict_of_dicts_add(self.country_data, iso3, data_type, country_raster)
+            dict_of_dicts_add(self.country_data, iso3, data_type, mosaic_file)
         return self.country_data[iso3]
 
     def generate_dataset(self, iso3: str) -> Optional[Dataset]:
