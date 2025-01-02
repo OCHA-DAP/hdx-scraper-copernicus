@@ -75,6 +75,8 @@ def main(
                     iso3s = copernicus.get_boundaries()
 
                     for iso3 in iso3s:
+                        if iso3 in ["ATA"]:
+                            continue
                         country_data = copernicus.process(iso3)
                         if not country_data:
                             continue
