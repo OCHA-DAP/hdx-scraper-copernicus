@@ -20,7 +20,7 @@ from hdx.utilities.path import (
 from hdx.utilities.retriever import Retrieve
 from hdx.utilities.state import State
 
-from copernicus import Copernicus
+from hdx.scraper.copernicus.copernicus import Copernicus
 
 logger = logging.getLogger(__name__)
 
