@@ -28,6 +28,9 @@ _USER_AGENT_LOOKUP = "hdx-scraper-copernicus"
 _SAVED_DATA_DIR = "saved_data"  # Keep in repo to avoid deletion in /tmp
 _UPDATED_BY_SCRIPT = "HDX Scraper: copernicus"
 
+generate_country_datasets = True
+generate_global_dataset = True
+
 
 def main(
     save: bool = True,
@@ -69,8 +72,27 @@ def main(
                     configuration,
                     retriever,
                 )
-                updated = copernicus.get_ghs_data(year, state_dict)
-                if updated:
+                updated = copernicus.get_ghs_data(
+                    year,
+                    state_dict,
+                    generate_country_datasets,
+                )
+
+                if updated and generate_global_dataset:
+                    dataset = copernicus.generate_global_dataset()
+                    dataset.update_from_yaml(
+                        path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
+                    )
+                    dataset["notes"] = dataset["notes"].replace("\n", "  \n")
+                    dataset.create_in_hdx(
+                        remove_additional_resources=True,
+                        match_resource_order=False,
+                        hxl_update=False,
+                        updated_by_script=_UPDATED_BY_SCRIPT,
+                        batch=info["batch"],
+                    )
+
+                if updated and generate_country_datasets:
                     copernicus.get_tiling_schema()
                     iso3s = copernicus.get_boundaries()
 

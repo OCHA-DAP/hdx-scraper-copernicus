@@ -20,6 +20,7 @@ from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 from rasterio.mask import mask
 from rasterio.merge import merge
+from requests import head
 from shapely.validation import make_valid
 from slugify import slugify
 
@@ -35,6 +36,7 @@ class Copernicus:
         self._retriever = retriever
         self._temp_folder = retriever.temp_dir
         self.tiling_schema = None
+        self.global_boundaries = {}
         self.global_data = {}
         self.tiles_by_country = {}
         self.latest_data = {}
@@ -95,10 +97,10 @@ class Copernicus:
                 iso = row["properties"]["Color_Code"]
                 if iso[:2] == "XX":
                     continue
-                self.global_data[iso] = [row["geometry"]]
-            return list(self.global_data.keys())
+                self.global_boundaries[iso] = [row["geometry"]]
+            return list(self.global_boundaries.keys())
 
-    def get_ghs_data(self, current_year: int, state_dict: Dict) -> bool:
+    def get_ghs_data(self, current_year: int, state_dict: Dict, download_country: bool) -> bool:
         file_patterns = self._configuration["file_patterns"]
         base_url = self._configuration["base_url"]
         lines = self.get_lines(base_url, "ghsl_ftp.txt")
@@ -129,19 +131,24 @@ class Copernicus:
                 return False
             self.data_year[data_type] = year
             state_dict[data_type] = parse_date(f"{year}-01-01")
-            tile_lines = self.get_lines(
-                f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/",
-                filename=f"{subsubfolder.replace("/", "")}.txt",
+            global_file = (
+                f"{base_url}{subfolder}{subsubfolder}V1-0/{subsubfolder.replace("/", "")}_V1_0.zip"
             )
-            for tile_line in tile_lines:
-                zip_file = tile_line.get("href")
-                if ".zip" not in zip_file:
-                    continue
-                zip_url = f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/{zip_file}"
-                zip_file_path = self._retriever.download_file(zip_url)
-                with ZipFile(zip_file_path, "r") as z:
-                    file_path = z.extract(f"{zip_file[:-4]}.tif", self._temp_folder)
-                dict_of_lists_add(self.latest_data, data_type, file_path)
+            self.global_data[data_type] = global_file
+            if download_country:
+                tile_lines = self.get_lines(
+                    f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/",
+                    filename=f"{subsubfolder.replace("/", "")}.txt",
+                )
+                for tile_line in tile_lines:
+                    zip_file = tile_line.get("href")
+                    if ".zip" not in zip_file:
+                        continue
+                    zip_url = f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/{zip_file}"
+                    zip_file_path = self._retriever.download_file(zip_url)
+                    with ZipFile(zip_file_path, "r") as z:
+                        file_path = z.extract(f"{zip_file[:-4]}.tif", self._temp_folder)
+                    dict_of_lists_add(self.latest_data, data_type, file_path)
         return True
 
     def process(self, iso3: str) -> Dict | None:
@@ -150,7 +157,7 @@ class Copernicus:
         if not country_name:
             logger.error(f"Couldn't find country {iso3}, skipping")
             return None
-        iso_geometry = self.global_data[iso3]
+        iso_geometry = self.global_boundaries[iso3]
         iso_tiles = self.tiles_by_country[iso3]
         for data_type, raster_list in self.latest_data.items():
             files_to_mosaic = []
@@ -190,6 +197,46 @@ class Copernicus:
                 dest.write(mosaic_raster)
             dict_of_dicts_add(self.country_data, iso3, data_type, mosaic_file)
         return self.country_data[iso3]
+
+    def generate_global_dataset(self) -> Optional[Dataset]:
+        dataset_name = "global-human-settlement-layer-ghsl"
+        dataset_title = "Copernicus Global Human Settlement Layer (GHSL)"
+
+        dataset = Dataset(
+            {
+                "name": dataset_name,
+                "title": dataset_title,
+            }
+        )
+        time_period = [value for _, value in self.data_year.items()]
+        dataset.set_time_period_year_range(min(time_period), max(time_period))
+        dataset_tags = self._configuration["tags"]
+        dataset.add_tags(dataset_tags)
+        dataset.add_other_location("world")
+        dataset["customviz"] = [
+            {
+                "url": "https://human-settlement.emergency.copernicus.eu/visualisation.php#lnlt=@50.93074,12.87598,5z&v=301&ln=0&gr=ds&lv=10000000000000000000000000000000000000011111&lo=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&pg=V"
+            }
+        ]
+
+        resource_info = self._configuration["resource_info"]
+        for data_type, file_url in self.global_data.items():
+            file_size = head(file_url).headers.get("Content-Length")
+            file_size = round(int(file_size) / (1024**3), 1)
+            resource_desc = resource_info[data_type]["description"].replace(
+                "YYYY", str(self.data_year[data_type])
+            )
+            resource = Resource(
+                {
+                    "name": resource_info[data_type]["name"],
+                    "description": f"{resource_desc} ({file_size} GB)",
+                    "url": file_url,
+                    "format": "GeoTIFF",
+                }
+            )
+            dataset.add_update_resource(resource)
+
+        return dataset
 
     def generate_dataset(self, iso3: str) -> Optional[Dataset]:
         country_name = Country.get_country_name_from_iso3(iso3)

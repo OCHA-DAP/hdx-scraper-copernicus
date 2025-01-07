@@ -233,7 +233,7 @@ pydantic-core==2.27.2
     # via
     #   -c requirements.txt
     #   pydantic
-pygments==2.18.0
+pygments==2.19.1
     # via
     #   -c requirements.txt
     #   rich
@@ -326,7 +326,7 @@ rpds-py==0.22.3
     #   -c requirements.txt
     #   jsonschema
     #   referencing
-ruamel-yaml==0.18.8
+ruamel-yaml==0.18.10
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
@@ -334,7 +334,7 @@ ruamel-yaml-clib==0.2.12
     # via
     #   -c requirements.txt
     #   ruamel-yaml
-setuptools==75.6.0
+setuptools==75.7.0
     # via
     #   -c requirements.txt
     #   ckanapi

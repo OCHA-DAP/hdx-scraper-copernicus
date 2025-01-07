@@ -68,9 +68,13 @@ class TestCopernicus:
                     configuration,
                     retriever,
                 )
-                updated = copernicus.get_ghs_data(2024, {"DEFAULT": parse_date("2019-01-01")})
+                updated = copernicus.get_ghs_data(2024, {"DEFAULT": parse_date("2019-01-01")}, True)
                 assert updated is True
                 assert copernicus.data_year == {"built": 2020, "population": 2020}
+                assert copernicus.global_data == {
+                    "built": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_54009_100/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_54009_100_V1_0.zip",
+                    "population": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_POP_GLOBE_R2023A/GHS_POP_E2020_GLOBE_R2023A_54009_100/V1-0/GHS_POP_E2020_GLOBE_R2023A_54009_100_V1_0.zip",
+                }
                 assert copernicus.latest_data == {
                     "built": [
                         join(
@@ -91,6 +95,33 @@ class TestCopernicus:
                             tempdir,
                             "GHS_POP_E2020_GLOBE_R2023A_54009_100_V1_0_R7_C11.tif",
                         ),
+                    ],
+                }
+
+                dataset = copernicus.generate_global_dataset()
+                assert dataset == {
+                    "name": "global-human-settlement-layer-ghsl",
+                    "title": "Copernicus Global Human Settlement Layer (GHSL)",
+                    "dataset_date": "[2020-01-01T00:00:00 TO 2020-12-31T23:59:59]",
+                    "tags": [
+                        {
+                            "name": "facilities-infrastructure",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                        {
+                            "name": "populated places-settlements",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                        {
+                            "name": "population",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                    ],
+                    "groups": [{"name": "world"}],
+                    "customviz": [
+                        {
+                            "url": "https://human-settlement.emergency.copernicus.eu/visualisation.php#lnlt=@50.93074,12.87598,5z&v=301&ln=0&gr=ds&lv=10000000000000000000000000000000000000011111&lo=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&pg=V"
+                        }
                     ],
                 }
 
@@ -153,7 +184,7 @@ class TestCopernicus:
                     "private": False,
                     "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",
                     "owner_org": "47677055-92e2-4f68-bf1b-5d570f27e791",
-                    "data_update_frequency": -2,
+                    "data_update_frequency": 365,
                     "notes": "Open and free data for assessing the human presence on the planet."
                     "\r\nThe Global Human Settlement Layer (GHSL) project produces global spatial "
                     "information, evidence-based analytics, and knowledge describing the human "
