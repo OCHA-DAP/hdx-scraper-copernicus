@@ -77,26 +77,23 @@ class Copernicus:
                 _, file_path = resource.download(folder)
             lyr = read_file(file_path)
             lyr = lyr.to_crs(crs="ESRI:54009")
-            for i, _ in lyr.iterrows():
+            for i, row in lyr.iterrows():
                 if not lyr.geometry[i].is_valid:
                     lyr.loc[i, "geometry"] = make_valid(lyr.geometry[i])
-            lyr.loc[lyr["ISO_3"] == "PSE", "Color_Code"] = "PSE"
-            lyr = lyr.dissolve(by="Color_Code", as_index=False)
+                if row["STATUS"] and row["STATUS"][:4] == "Adm.":
+                    lyr.loc[i, "ISO_3"] = row["Color_Code"]
+            lyr = lyr.dissolve(by="ISO_3", as_index=False)
             lyr = lyr.drop(
-                [f for f in lyr.columns if f.lower() not in ["color_code", "geometry"]],
+                [f for f in lyr.columns if f.lower() not in ["iso_3", "geometry"]],
                 axis=1,
             )
             joined_lyr = overlay(self.tiling_schema, lyr, how="intersection")
             for i, row in joined_lyr.iterrows():
-                iso = row["Color_Code"]
-                if iso[:2] == "XX":
-                    continue
-                dict_of_lists_add(self.tiles_by_country, row["Color_Code"], row["tile_id"])
+                iso = row["ISO_3"]
+                dict_of_lists_add(self.tiles_by_country, iso, row["tile_id"])
             lyr = loads(lyr.to_json())["features"]
             for row in lyr:
-                iso = row["properties"]["Color_Code"]
-                if iso[:2] == "XX":
-                    continue
+                iso = row["properties"]["ISO_3"]
                 self.global_boundaries[iso] = [row["geometry"]]
             return list(self.global_boundaries.keys())
 
