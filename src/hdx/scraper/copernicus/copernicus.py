@@ -54,7 +54,9 @@ class Copernicus:
         zip_file_path = self._retriever.download_file(url)
         with ZipFile(zip_file_path, "r") as z:
             z.extractall(self._temp_folder)
-        file_path = join(self._temp_folder, self._configuration["tiling_schema"]["filename"])
+        file_path = join(
+            self._temp_folder, self._configuration["tiling_schema"]["filename"]
+        )
         lyr = read_file(file_path)
         lyr = lyr.drop(
             [f for f in lyr.columns if f.lower() not in ["tile_id", "geometry"]],
@@ -73,7 +75,11 @@ class Copernicus:
                     resource["url"], filename=resource["name"]
                 )
             else:
-                folder = self._retriever.saved_dir if self._retriever.save else self._temp_folder
+                folder = (
+                    self._retriever.saved_dir
+                    if self._retriever.save
+                    else self._temp_folder
+                )
                 _, file_path = resource.download(folder)
             lyr = read_file(file_path)
             lyr = lyr.to_crs(crs="ESRI:54009")
@@ -97,7 +103,9 @@ class Copernicus:
                 self.global_boundaries[iso] = [row["geometry"]]
             return list(self.global_boundaries.keys())
 
-    def get_ghs_data(self, current_year: int, state_dict: Dict, download_country: bool) -> bool:
+    def get_ghs_data(
+        self, current_year: int, state_dict: Dict, download_country: bool
+    ) -> bool:
         file_patterns = self._configuration["file_patterns"]
         base_url = self._configuration["base_url"]
         lines = self.get_lines(base_url, "ghsl_ftp.txt")
@@ -111,7 +119,7 @@ class Copernicus:
             subfolder, _ = _select_latest_data(_MODELED_YEAR_PATTERN, subfolders)
             sub_lines = self.get_lines(
                 f"{base_url}{subfolder}",
-                filename=f"{subfolder.replace("/", "")}.txt",
+                filename=f"{subfolder.replace('/', '')}.txt",
             )
             subsubfolders = []
             for sub_line in sub_lines:
@@ -128,20 +136,20 @@ class Copernicus:
                 return False
             self.data_year[data_type] = year
             state_dict[data_type] = parse_date(f"{year}-01-01")
-            global_file = (
-                f"{base_url}{subfolder}{subsubfolder}V1-0/{subsubfolder.replace("/", "")}_V1_0.zip"
-            )
+            global_file = f"{base_url}{subfolder}{subsubfolder}V1-0/{subsubfolder.replace('/', '')}_V1_0.zip"
             self.global_data[data_type] = global_file
             if download_country:
                 tile_lines = self.get_lines(
                     f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/",
-                    filename=f"{subsubfolder.replace("/", "")}.txt",
+                    filename=f"{subsubfolder.replace('/', '')}.txt",
                 )
                 for tile_line in tile_lines:
                     zip_file = tile_line.get("href")
                     if ".zip" not in zip_file:
                         continue
-                    zip_url = f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/{zip_file}"
+                    zip_url = (
+                        f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/{zip_file}"
+                    )
                     zip_file_path = self._retriever.download_file(zip_url)
                     with ZipFile(zip_file_path, "r") as z:
                         file_path = z.extract(f"{zip_file[:-4]}.tif", self._temp_folder)
@@ -175,7 +183,9 @@ class Copernicus:
                     }
                 )
                 country_file = raster_file.replace("GLOBE_", "")[:-4] + f"_{iso3}.tif"
-                with rasterio.open(country_file, "w", **mask_meta, compress="LZW") as dest:
+                with rasterio.open(
+                    country_file, "w", **mask_meta, compress="LZW"
+                ) as dest:
                     dest.write(mask_raster)
                 open_file = rasterio.open(country_file)
                 files_to_mosaic.append(open_file)
@@ -238,7 +248,9 @@ class Copernicus:
     def generate_dataset(self, iso3: str) -> Optional[Dataset]:
         country_name = Country.get_country_name_from_iso3(iso3)
         dataset_name = slugify(f"{iso3}-ghsl")
-        dataset_title = f"{country_name}: Copernicus Global Human Settlement Layer (GHSL)"
+        dataset_title = (
+            f"{country_name}: Copernicus Global Human Settlement Layer (GHSL)"
+        )
 
         dataset = Dataset(
             {
