@@ -7,7 +7,7 @@ script then creates in HDX.
 
 import logging
 from copy import deepcopy
-from os.path import dirname, expanduser, join
+from os.path import expanduser, join
 
 from hdx.api.configuration import Configuration
 from hdx.data.user import User
@@ -15,6 +15,7 @@ from hdx.facades.infer_arguments import facade
 from hdx.utilities.dateparse import now_utc
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import (
+    script_dir_plus_file,
     wheretostart_tempdir_batch,
 )
 from hdx.utilities.retriever import Retrieve
@@ -83,8 +84,8 @@ def main(
                 if updated and generate_global_dataset:
                     dataset = copernicus.generate_global_dataset()
                     dataset.update_from_yaml(
-                        path=join(
-                            dirname(__file__), "config", "hdx_dataset_static.yaml"
+                        script_dir_plus_file(
+                            join("config", "hdx_dataset_static.yaml"), main
                         )
                     )
                     dataset["notes"] = dataset["notes"].replace("\n", "  \n")
@@ -108,8 +109,8 @@ def main(
                             continue
                         dataset = copernicus.generate_dataset(iso3)
                         dataset.update_from_yaml(
-                            path=join(
-                                dirname(__file__), "config", "hdx_dataset_static.yaml"
+                            script_dir_plus_file(
+                                join("config", "hdx_dataset_static.yaml"), main
                             )
                         )
                         dataset["notes"] = dataset["notes"].replace("\n", "  \n")
@@ -128,7 +129,7 @@ if __name__ == "__main__":
         main,
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=_USER_AGENT_LOOKUP,
-        project_config_yaml=join(
-            dirname(__file__), "config", "project_configuration.yaml"
+        project_config_yaml=script_dir_plus_file(
+            join("config", "project_configuration.yaml"), main
         ),
     )
