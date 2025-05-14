@@ -1,6 +1,5 @@
 from os.path import join
 
-from hdx.utilities.dateparse import parse_date
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
@@ -26,13 +25,14 @@ class TestCopernicus:
                     save=False,
                     use_saved=True,
                 )
+                configuration["dataset_dates"] = {
+                    "default": {"modeled": 2023, "estimated": 2019}
+                }
                 copernicus = Copernicus(
                     configuration,
                     retriever,
                 )
-                updated = copernicus.get_ghs_data(
-                    2024, {"DEFAULT": parse_date("2019-01-01")}, True
-                )
+                updated = copernicus.get_ghs_data(2024, True)
                 assert updated is True
                 assert copernicus.data_year == {"built": 2020, "population": 2020}
                 assert copernicus.global_data == {

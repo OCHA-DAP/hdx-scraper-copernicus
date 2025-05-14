@@ -15,7 +15,6 @@ from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.resource import Resource
 from hdx.location.country import Country
-from hdx.utilities.dateparse import parse_date
 from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 from rasterio.mask import mask
@@ -103,20 +102,23 @@ class Copernicus:
                 self.global_boundaries[iso] = [row["geometry"]]
             return list(self.global_boundaries.keys())
 
-    def get_ghs_data(
-        self, current_year: int, state_dict: Dict, download_country: bool
-    ) -> bool:
+    def get_ghs_data(self, current_year: int, download_country: bool) -> bool:
         file_patterns = self._configuration["file_patterns"]
         base_url = self._configuration["base_url"]
         lines = self.get_lines(base_url, "ghsl_ftp.txt")
         for data_type, subfolder_pattern in file_patterns.items():
+            dataset_dates = self._configuration["dataset_dates"].get(
+                data_type, self._configuration["dataset_dates"]["default"]
+            )
             subfolders = []
             for line in lines:
                 subfolder = line.get("href")
                 if subfolder_pattern not in subfolder:
                     continue
                 subfolders.append(subfolder)
-            subfolder, _ = _select_latest_data(_MODELED_YEAR_PATTERN, subfolders)
+            subfolder, modeled_year = _select_latest_data(
+                _MODELED_YEAR_PATTERN, subfolders
+            )
             sub_lines = self.get_lines(
                 f"{base_url}{subfolder}",
                 filename=f"{subfolder.replace('/', '')}.txt",
@@ -132,10 +134,12 @@ class Copernicus:
             subsubfolder, year = _select_latest_data(
                 _DATA_YEAR_PATTERN, subsubfolders, current_year
             )
-            if year <= state_dict.get(data_type, state_dict["DEFAULT"]).year:
+            if (
+                modeled_year == dataset_dates["modeled"]
+                and year == dataset_dates["estimated"]
+            ):
                 return False
             self.data_year[data_type] = year
-            state_dict[data_type] = parse_date(f"{year}-01-01")
             global_file = f"{base_url}{subfolder}{subsubfolder}V1-0/{subsubfolder.replace('/', '')}_V1_0.zip"
             self.global_data[data_type] = global_file
             if download_country:

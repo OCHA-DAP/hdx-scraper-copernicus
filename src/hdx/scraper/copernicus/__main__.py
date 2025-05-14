@@ -6,7 +6,6 @@ script then creates in HDX.
 """
 
 import logging
-from copy import deepcopy
 from os.path import expanduser, join
 
 from hdx.api.configuration import Configuration
@@ -19,7 +18,6 @@ from hdx.utilities.path import (
     wheretostart_tempdir_batch,
 )
 from hdx.utilities.retriever import Retrieve
-from hdx.utilities.state import State
 
 from hdx.scraper.copernicus.copernicus import Copernicus
 
@@ -52,37 +50,57 @@ def main(
             "API Token does not give access to Copernicus organisation!"
         )
 
-    with State(
-        "data_dates.txt",
-        State.dates_str_to_country_date_dict,
-        State.country_date_dict_to_dates_str,
-    ) as state:
-        state_dict = deepcopy(state.get())
-        with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
-            temp_dir = info["folder"]
-            today = now_utc()
-            year = today.year
-            with Download() as downloader:
-                retriever = Retrieve(
-                    downloader=downloader,
-                    fallback_dir=temp_dir,
-                    saved_dir=_SAVED_DATA_DIR,
-                    temp_dir=temp_dir,
-                    save=save,
-                    use_saved=use_saved,
+    with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
+        temp_dir = info["folder"]
+        today = now_utc()
+        year = today.year
+        with Download() as downloader:
+            retriever = Retrieve(
+                downloader=downloader,
+                fallback_dir=temp_dir,
+                saved_dir=_SAVED_DATA_DIR,
+                temp_dir=temp_dir,
+                save=save,
+                use_saved=use_saved,
+            )
+            copernicus = Copernicus(
+                configuration,
+                retriever,
+            )
+            updated = copernicus.get_ghs_data(
+                year,
+                generate_country_datasets,
+            )
+            if not updated:
+                return
+
+            if generate_global_dataset:
+                dataset = copernicus.generate_global_dataset()
+                dataset.update_from_yaml(
+                    script_dir_plus_file(
+                        join("config", "hdx_dataset_static.yaml"), main
+                    )
                 )
-                copernicus = Copernicus(
-                    configuration,
-                    retriever,
-                )
-                updated = copernicus.get_ghs_data(
-                    year,
-                    state_dict,
-                    generate_country_datasets,
+                dataset["notes"] = dataset["notes"].replace("\n", "  \n")
+                dataset.create_in_hdx(
+                    remove_additional_resources=True,
+                    match_resource_order=False,
+                    hxl_update=False,
+                    updated_by_script=_UPDATED_BY_SCRIPT,
+                    batch=info["batch"],
                 )
 
-                if updated and generate_global_dataset:
-                    dataset = copernicus.generate_global_dataset()
+            if generate_country_datasets:
+                copernicus.get_tiling_schema()
+                iso3s = copernicus.get_boundaries()
+
+                for iso3 in iso3s:
+                    if iso3 in ["ATA"]:
+                        continue
+                    country_data = copernicus.process(iso3)
+                    if not country_data:
+                        continue
+                    dataset = copernicus.generate_dataset(iso3)
                     dataset.update_from_yaml(
                         script_dir_plus_file(
                             join("config", "hdx_dataset_static.yaml"), main
@@ -96,32 +114,6 @@ def main(
                         updated_by_script=_UPDATED_BY_SCRIPT,
                         batch=info["batch"],
                     )
-
-                if updated and generate_country_datasets:
-                    copernicus.get_tiling_schema()
-                    iso3s = copernicus.get_boundaries()
-
-                    for iso3 in iso3s:
-                        if iso3 in ["ATA"]:
-                            continue
-                        country_data = copernicus.process(iso3)
-                        if not country_data:
-                            continue
-                        dataset = copernicus.generate_dataset(iso3)
-                        dataset.update_from_yaml(
-                            script_dir_plus_file(
-                                join("config", "hdx_dataset_static.yaml"), main
-                            )
-                        )
-                        dataset["notes"] = dataset["notes"].replace("\n", "  \n")
-                        dataset.create_in_hdx(
-                            remove_additional_resources=True,
-                            match_resource_order=False,
-                            hxl_update=False,
-                            updated_by_script=_UPDATED_BY_SCRIPT,
-                            batch=info["batch"],
-                        )
-                state.set(state_dict)
 
 
 if __name__ == "__main__":
