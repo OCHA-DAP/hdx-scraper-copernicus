@@ -102,7 +102,9 @@ class Copernicus:
                 self.global_boundaries[iso] = [row["geometry"]]
             return list(self.global_boundaries.keys())
 
-    def get_ghs_data(self, current_year: int, download_country: bool) -> bool:
+    def get_ghs_data(
+        self, current_year: int, download_country: bool, running_on_gha: bool
+    ) -> bool:
         file_patterns = self._configuration["file_patterns"]
         base_url = self._configuration["base_url"]
         lines = self.get_lines(base_url, "ghsl_ftp.txt")
@@ -139,6 +141,8 @@ class Copernicus:
                 and year == dataset_dates["estimated"]
             ):
                 return False
+            if running_on_gha:
+                return True
             self.data_year[data_type] = year
             global_file = f"{base_url}{subfolder}{subsubfolder}V1-0/{subsubfolder.replace('/', '')}_V1_0.zip"
             self.global_data[data_type] = global_file

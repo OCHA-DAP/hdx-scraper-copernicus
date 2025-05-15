@@ -6,6 +6,8 @@ script then creates in HDX.
 """
 
 import logging
+import sys
+from os import getenv
 from os.path import expanduser, join
 
 from hdx.api.configuration import Configuration
@@ -50,6 +52,7 @@ def main(
             "API Token does not give access to Copernicus organisation!"
         )
 
+    running_on_gha = False if getenv("GITHUB_ACTIONS") is None else True
     with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
         temp_dir = info["folder"]
         today = now_utc()
@@ -70,9 +73,13 @@ def main(
             updated = copernicus.get_ghs_data(
                 year,
                 generate_country_datasets,
+                running_on_gha,
             )
             if not updated:
                 return
+            if running_on_gha:
+                logger.error("Data has been updated, run locally")
+                sys.exit(1)
 
             if generate_global_dataset:
                 dataset = copernicus.generate_global_dataset()

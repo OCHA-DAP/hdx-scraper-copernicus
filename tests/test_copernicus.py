@@ -32,7 +32,7 @@ class TestCopernicus:
                     configuration,
                     retriever,
                 )
-                updated = copernicus.get_ghs_data(2024, True)
+                updated = copernicus.get_ghs_data(2024, True, False)
                 assert updated is True
                 assert copernicus.data_year == {"built": 2020, "population": 2020}
                 assert copernicus.global_data == {

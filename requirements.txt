@@ -186,7 +186,7 @@ rfc3986==2.0.0
     # via frictionless
 rich==14.0.0
     # via typer
-rpds-py==0.24.0
+rpds-py==0.25.0
     # via
     #   jsonschema
     #   referencing
@@ -194,7 +194,7 @@ ruamel-yaml==0.18.10
     # via hdx-python-utilities
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-setuptools==80.4.0
+setuptools==80.7.1
     # via ckanapi
 shapely==2.1.0
     # via geopandas
