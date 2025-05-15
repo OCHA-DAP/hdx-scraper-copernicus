@@ -27,3 +27,14 @@ resource_info:
   population:
     name: "GHS Population Grid"
     description: "Product: GHS-POP, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide"
+
+dataset_dates:
+  default:
+    modeled: 2023
+    estimated: 2025
+  built:
+    modeled: 2023
+    estimated: 2025
+  population:
+    modeled: 2023
+    estimated: 2025

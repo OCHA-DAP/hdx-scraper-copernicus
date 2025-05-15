@@ -1,55 +1,16 @@
 from os.path import join
 
-import pytest
-from hdx.api.configuration import Configuration
-from hdx.data.dataset import Dataset
-from hdx.utilities.dateparse import parse_date
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
-from hdx.utilities.useragent import UserAgent
 
 from hdx.scraper.copernicus.copernicus import Copernicus
 
 
 class TestCopernicus:
-    @pytest.fixture(scope="function")
-    def configuration(self, config_dir):
-        UserAgent.set_global("test")
-        Configuration._create(
-            hdx_read_only=True,
-            hdx_site="prod",
-            project_config_yaml=join(config_dir, "project_configuration.yaml"),
-        )
-        return Configuration.read()
-
-    @pytest.fixture(scope="function")
-    def read_dataset(self, monkeypatch):
-        def read_from_hdx(dataset_name):
-            return Dataset.load_from_json(
-                join(
-                    "tests",
-                    "fixtures",
-                    "input",
-                    f"dataset-{dataset_name}.json",
-                )
-            )
-
-        monkeypatch.setattr(Dataset, "read_from_hdx", staticmethod(read_from_hdx))
-
-    @pytest.fixture(scope="class")
-    def fixtures_dir(self):
-        return join("tests", "fixtures")
-
-    @pytest.fixture(scope="class")
-    def input_dir(self, fixtures_dir):
-        return join(fixtures_dir, "input")
-
-    @pytest.fixture(scope="class")
-    def config_dir(self, fixtures_dir):
-        return join("src", "hdx", "scraper", "copernicus", "config")
-
-    def test_copernicus(self, configuration, read_dataset, fixtures_dir, input_dir, config_dir):
+    def test_copernicus(
+        self, configuration, read_dataset, fixtures_dir, input_dir, config_dir
+    ):
         with temp_dir(
             "TestCopernicus",
             delete_on_success=True,
@@ -64,11 +25,14 @@ class TestCopernicus:
                     save=False,
                     use_saved=True,
                 )
+                configuration["dataset_dates"] = {
+                    "default": {"modeled": 2023, "estimated": 2019}
+                }
                 copernicus = Copernicus(
                     configuration,
                     retriever,
                 )
-                updated = copernicus.get_ghs_data(2024, {"DEFAULT": parse_date("2019-01-01")}, True)
+                updated = copernicus.get_ghs_data(2024, True, False)
                 assert updated is True
                 assert copernicus.data_year == {"built": 2020, "population": 2020}
                 assert copernicus.global_data == {
@@ -136,12 +100,18 @@ class TestCopernicus:
 
                 country_data = copernicus.process("CUB")
                 assert country_data == {
-                    "built": join(tempdir, "GHS_BUILT_S_E2020_R2023A_54009_100_V1_0_CUB.tif"),
-                    "population": join(tempdir, "GHS_POP_E2020_R2023A_54009_100_V1_0_CUB.tif"),
+                    "built": join(
+                        tempdir, "GHS_BUILT_S_E2020_R2023A_54009_100_V1_0_CUB.tif"
+                    ),
+                    "population": join(
+                        tempdir, "GHS_POP_E2020_R2023A_54009_100_V1_0_CUB.tif"
+                    ),
                 }
 
                 dataset = copernicus.generate_dataset("CUB")
-                dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
+                dataset.update_from_yaml(
+                    path=join(config_dir, "hdx_dataset_static.yaml")
+                )
                 assert dataset == {
                     "name": "cub-ghsl",
                     "title": "Cuba: Copernicus Global Human Settlement Layer (GHSL)",

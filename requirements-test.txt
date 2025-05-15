@@ -8,7 +8,7 @@ annotated-types==0.7.0
     # via
     #   -c requirements.txt
     #   pydantic
-attrs==24.3.0
+attrs==25.3.0
     # via
     #   -c requirements.txt
     #   frictionless
@@ -16,7 +16,7 @@ attrs==24.3.0
     #   jsonschema
     #   rasterio
     #   referencing
-beautifulsoup4==4.12.3
+beautifulsoup4==4.13.4
     # via
     #   -c requirements.txt
     #   bs4
@@ -24,7 +24,7 @@ bs4==0.0.2
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-certifi==2024.12.14
+certifi==2025.4.26
     # via
     #   -c requirements.txt
     #   pyogrio
@@ -35,7 +35,7 @@ chardet==5.2.0
     # via
     #   -c requirements.txt
     #   frictionless
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via
     #   -c requirements.txt
     #   requests
@@ -43,7 +43,7 @@ ckanapi==4.8
     # via
     #   -c requirements.txt
     #   hdx-python-api
-click==8.1.8
+click==8.2.0
     # via
     #   -c requirements.txt
     #   click-plugins
@@ -58,7 +58,7 @@ cligj==0.7.2
     # via
     #   -c requirements.txt
     #   rasterio
-coverage==7.6.10
+coverage==7.8.0
     # via pytest-cov
 defopt==6.4.0
     # via
@@ -85,7 +85,7 @@ et-xmlfile==2.0.0
     # via
     #   -c requirements.txt
     #   openpyxl
-frictionless==5.18.0
+frictionless==5.18.1
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
@@ -93,21 +93,21 @@ geopandas==1.0.1
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-hdx-python-api==6.3.5
+hdx-python-api==6.3.9
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-hdx-python-country==3.8.5
+hdx-python-country==3.9.3
     # via
     #   -c requirements.txt
     #   hdx-python-api
-hdx-python-utilities==3.7.4
+hdx-python-utilities==3.8.7
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
     #   hdx-python-api
     #   hdx-python-country
-humanize==4.11.0
+humanize==4.12.3
     # via
     #   -c requirements.txt
     #   frictionless
@@ -116,7 +116,7 @@ idna==3.10
     #   -c requirements.txt
     #   email-validator
     #   requests
-ijson==3.3.0
+ijson==3.4.0
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
@@ -124,13 +124,13 @@ inflect==7.5.0
     # via
     #   -c requirements.txt
     #   quantulum3
-iniconfig==2.0.0
+iniconfig==2.1.0
     # via pytest
 isodate==0.7.2
     # via
     #   -c requirements.txt
     #   frictionless
-jinja2==3.1.5
+jinja2==3.1.6
     # via
     #   -c requirements.txt
     #   frictionless
@@ -147,7 +147,7 @@ jsonschema==4.23.0
     #   -c requirements.txt
     #   frictionless
     #   tableschema-to-template
-jsonschema-specifications==2024.10.1
+jsonschema-specifications==2025.4.1
     # via
     #   -c requirements.txt
     #   jsonschema
@@ -160,7 +160,7 @@ loguru==0.7.3
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
-makefun==1.15.6
+makefun==1.16.0
     # via
     #   -c requirements.txt
     #   hdx-python-api
@@ -168,7 +168,7 @@ markdown-it-py==3.0.0
     # via
     #   -c requirements.txt
     #   rich
-marko==2.1.2
+marko==2.1.3
     # via
     #   -c requirements.txt
     #   frictionless
@@ -180,7 +180,7 @@ mdurl==0.1.2
     # via
     #   -c requirements.txt
     #   markdown-it-py
-more-itertools==10.5.0
+more-itertools==10.7.0
     # via
     #   -c requirements.txt
     #   inflect
@@ -188,7 +188,7 @@ num2words==0.5.14
     # via
     #   -c requirements.txt
     #   quantulum3
-numpy==2.2.1
+numpy==2.2.5
     # via
     #   -c requirements.txt
     #   geopandas
@@ -200,7 +200,7 @@ openpyxl==3.1.5
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
-packaging==24.2
+packaging==25.0
     # via
     #   -c requirements.txt
     #   geopandas
@@ -210,11 +210,11 @@ pandas==2.2.3
     # via
     #   -c requirements.txt
     #   geopandas
-petl==1.7.15
+petl==1.7.16
     # via
     #   -c requirements.txt
     #   frictionless
-pluggy==1.5.0
+pluggy==1.6.0
     # via pytest
 ply==3.11
     # via
@@ -225,11 +225,11 @@ pockets==0.9.1
     # via
     #   -c requirements.txt
     #   sphinxcontrib-napoleon
-pydantic==2.10.4
+pydantic==2.11.4
     # via
     #   -c requirements.txt
     #   frictionless
-pydantic-core==2.27.2
+pydantic-core==2.33.2
     # via
     #   -c requirements.txt
     #   pydantic
@@ -237,27 +237,27 @@ pygments==2.19.1
     # via
     #   -c requirements.txt
     #   rich
-pyogrio==0.10.0
+pyogrio==0.11.0
     # via
     #   -c requirements.txt
     #   geopandas
-pyparsing==3.2.1
+pyparsing==3.2.3
     # via
     #   -c requirements.txt
     #   rasterio
 pyphonetics==0.5.3
     # via
     #   -c requirements.txt
-    #   hdx-python-country
-pyproj==3.7.0
+    #   hdx-python-utilities
+pyproj==3.7.1
     # via
     #   -c requirements.txt
     #   geopandas
-pytest==8.3.4
+pytest==8.3.5
     # via
     #   hdx-scraper-copernicus (pyproject.toml)
     #   pytest-cov
-pytest-cov==6.0.0
+pytest-cov==6.1.1
     # via hdx-scraper-copernicus (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via
@@ -275,7 +275,7 @@ python-slugify==8.0.4
     #   -c requirements.txt
     #   ckanapi
     #   frictionless
-pytz==2024.2
+pytz==2025.2
     # via
     #   -c requirements.txt
     #   pandas
@@ -296,7 +296,7 @@ ratelimit==2.2.1
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
-referencing==0.35.1
+referencing==0.36.2
     # via
     #   -c requirements.txt
     #   jsonschema
@@ -317,11 +317,11 @@ rfc3986==2.0.0
     # via
     #   -c requirements.txt
     #   frictionless
-rich==13.9.4
+rich==14.0.0
     # via
     #   -c requirements.txt
     #   typer
-rpds-py==0.22.3
+rpds-py==0.25.0
     # via
     #   -c requirements.txt
     #   jsonschema
@@ -334,11 +334,11 @@ ruamel-yaml-clib==0.2.12
     # via
     #   -c requirements.txt
     #   ruamel-yaml
-setuptools==75.7.0
+setuptools==80.7.1
     # via
     #   -c requirements.txt
     #   ckanapi
-shapely==2.0.6
+shapely==2.1.0
     # via
     #   -c requirements.txt
     #   geopandas
@@ -350,18 +350,18 @@ simpleeval==1.0.3
     # via
     #   -c requirements.txt
     #   frictionless
-simplejson==3.19.3
+simplejson==3.20.1
     # via
     #   -c requirements.txt
     #   ckanapi
-six==1.16.0
+six==1.17.0
     # via
     #   -c requirements.txt
     #   ckanapi
     #   pockets
     #   python-dateutil
     #   sphinxcontrib-napoleon
-soupsieve==2.6
+soupsieve==2.7
     # via
     #   -c requirements.txt
     #   beautifulsoup4
@@ -369,11 +369,7 @@ sphinxcontrib-napoleon==0.7
     # via
     #   -c requirements.txt
     #   defopt
-stringcase==1.2.0
-    # via
-    #   -c requirements.txt
-    #   frictionless
-structlog==24.4.0
+structlog==25.3.0
     # via
     #   -c requirements.txt
     #   libhxl
@@ -385,7 +381,7 @@ tabulate==0.9.0
     # via
     #   -c requirements.txt
     #   frictionless
-tenacity==9.0.0
+tenacity==9.1.2
     # via
     #   -c requirements.txt
     #   hdx-python-country
@@ -393,37 +389,44 @@ text-unidecode==1.3
     # via
     #   -c requirements.txt
     #   python-slugify
-typeguard==4.4.1
+typeguard==4.4.2
     # via
     #   -c requirements.txt
     #   inflect
-typer==0.15.1
+typer==0.15.3
     # via
     #   -c requirements.txt
     #   frictionless
-typing-extensions==4.12.2
+typing-extensions==4.13.2
     # via
     #   -c requirements.txt
+    #   beautifulsoup4
     #   frictionless
     #   pydantic
     #   pydantic-core
+    #   referencing
     #   typeguard
     #   typer
-tzdata==2024.2
+    #   typing-inspection
+typing-inspection==0.4.0
+    # via
+    #   -c requirements.txt
+    #   pydantic
+tzdata==2025.2
     # via
     #   -c requirements.txt
     #   pandas
-unidecode==1.3.8
+unidecode==1.4.0
     # via
     #   -c requirements.txt
     #   libhxl
     #   pyphonetics
-urllib3==2.3.0
+urllib3==2.4.0
     # via
     #   -c requirements.txt
     #   libhxl
     #   requests
-validators==0.34.0
+validators==0.35.0
     # via
     #   -c requirements.txt
     #   frictionless
@@ -443,7 +446,7 @@ xlsx2csv==0.8.4
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
-xlsxwriter==3.2.0
+xlsxwriter==3.2.3
     # via
     #   -c requirements.txt
     #   tableschema-to-template
