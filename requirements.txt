@@ -27,7 +27,7 @@ charset-normalizer==3.4.2
     # via requests
 ckanapi==4.8
     # via hdx-python-api
-click==8.2.0
+click==8.2.1
     # via
     #   click-plugins
     #   cligj
@@ -55,9 +55,9 @@ frictionless==5.18.1
     # via hdx-python-utilities
 geopandas==1.0.1
     # via hdx-scraper-copernicus (pyproject.toml)
-hdx-python-api==6.3.9
+hdx-python-api==6.4.2
     # via hdx-scraper-copernicus (pyproject.toml)
-hdx-python-country==3.9.3
+hdx-python-country==3.9.4
     # via hdx-python-api
 hdx-python-utilities==3.8.7
     # via
@@ -108,7 +108,7 @@ more-itertools==10.7.0
     # via inflect
 num2words==0.5.14
     # via quantulum3
-numpy==2.2.5
+numpy==2.2.6
     # via
     #   geopandas
     #   pandas
@@ -186,7 +186,7 @@ rfc3986==2.0.0
     # via frictionless
 rich==14.0.0
     # via typer
-rpds-py==0.25.0
+rpds-py==0.25.1
     # via
     #   jsonschema
     #   referencing
@@ -194,9 +194,9 @@ ruamel-yaml==0.18.10
     # via hdx-python-utilities
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-setuptools==80.7.1
+setuptools==80.8.0
     # via ckanapi
-shapely==2.1.0
+shapely==2.1.1
     # via geopandas
 shellingham==1.5.4
     # via typer
@@ -238,7 +238,7 @@ typing-extensions==4.13.2
     #   typeguard
     #   typer
     #   typing-inspection
-typing-inspection==0.4.0
+typing-inspection==0.4.1
     # via pydantic
 tzdata==2025.2
     # via pandas

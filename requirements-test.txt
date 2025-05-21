@@ -43,7 +43,7 @@ ckanapi==4.8
     # via
     #   -c requirements.txt
     #   hdx-python-api
-click==8.2.0
+click==8.2.1
     # via
     #   -c requirements.txt
     #   click-plugins
@@ -58,7 +58,7 @@ cligj==0.7.2
     # via
     #   -c requirements.txt
     #   rasterio
-coverage==7.8.0
+coverage==7.8.1
     # via pytest-cov
 defopt==6.4.0
     # via
@@ -93,11 +93,11 @@ geopandas==1.0.1
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-hdx-python-api==6.3.9
+hdx-python-api==6.4.2
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-hdx-python-country==3.9.3
+hdx-python-country==3.9.4
     # via
     #   -c requirements.txt
     #   hdx-python-api
@@ -188,7 +188,7 @@ num2words==0.5.14
     # via
     #   -c requirements.txt
     #   quantulum3
-numpy==2.2.5
+numpy==2.2.6
     # via
     #   -c requirements.txt
     #   geopandas
@@ -321,7 +321,7 @@ rich==14.0.0
     # via
     #   -c requirements.txt
     #   typer
-rpds-py==0.25.0
+rpds-py==0.25.1
     # via
     #   -c requirements.txt
     #   jsonschema
@@ -334,11 +334,11 @@ ruamel-yaml-clib==0.2.12
     # via
     #   -c requirements.txt
     #   ruamel-yaml
-setuptools==80.7.1
+setuptools==80.8.0
     # via
     #   -c requirements.txt
     #   ckanapi
-shapely==2.1.0
+shapely==2.1.1
     # via
     #   -c requirements.txt
     #   geopandas
@@ -408,7 +408,7 @@ typing-extensions==4.13.2
     #   typeguard
     #   typer
     #   typing-inspection
-typing-inspection==0.4.0
+typing-inspection==0.4.1
     # via
     #   -c requirements.txt
     #   pydantic

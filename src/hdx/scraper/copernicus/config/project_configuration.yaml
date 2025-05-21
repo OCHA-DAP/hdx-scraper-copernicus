@@ -3,7 +3,7 @@ boundary_dataset: "unmap-international-boundaries-geojson"
 
 boundary_resource: "polbnda_int_15m"
 
-base_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
+ghsl_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
 
 tiling_schema:
   url: "https://ghsl.jrc.ec.europa.eu/download/GHSL_data_54009_shapefile.zip"
@@ -27,14 +27,3 @@ resource_info:
   population:
     name: "GHS Population Grid"
     description: "Product: GHS-POP, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide"
-
-dataset_dates:
-  default:
-    modeled: 2023
-    estimated: 2025
-  built:
-    modeled: 2023
-    estimated: 2025
-  population:
-    modeled: 2023
-    estimated: 2025

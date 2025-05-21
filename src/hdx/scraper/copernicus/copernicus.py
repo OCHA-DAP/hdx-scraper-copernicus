@@ -106,12 +106,10 @@ class Copernicus:
         self, current_year: int, download_country: bool, running_on_gha: bool
     ) -> bool:
         file_patterns = self._configuration["file_patterns"]
-        base_url = self._configuration["base_url"]
+        dataset_dates = _get_ghs_dataset_dates(list(file_patterns.keys()))
+        base_url = self._configuration["ghsl_url"]
         lines = self.get_lines(base_url, "ghsl_ftp.txt")
         for data_type, subfolder_pattern in file_patterns.items():
-            dataset_dates = self._configuration["dataset_dates"].get(
-                data_type, self._configuration["dataset_dates"]["default"]
-            )
             subfolders = []
             for line in lines:
                 subfolder = line.get("href")
@@ -137,8 +135,8 @@ class Copernicus:
                 _DATA_YEAR_PATTERN, subsubfolders, current_year
             )
             if (
-                modeled_year == dataset_dates["modeled"]
-                and year == dataset_dates["estimated"]
+                modeled_year == dataset_dates[data_type]["modeled"]
+                and year == dataset_dates[data_type]["estimated"]
             ):
                 return False
             if running_on_gha:
@@ -301,3 +299,21 @@ def _select_latest_data(
     max_index = year_matches.index(max_year)
     latest_data = files[max_index]
     return latest_data, max_year
+
+
+def _get_ghs_dataset_dates(data_types: List[str]) -> Dict:
+    dataset_dates = {}
+    dataset = Dataset.read_from_hdx("global-human-settlement-layer-ghsl")
+    resources = dataset.get_resources()
+    for resource in resources:
+        data_type = [d for d in data_types if d in resource["name"].lower()][0]
+        resource_name = resource["url"].split("/")[-1]
+        estimated = re.findall("_e2\\d{3}_", resource_name, re.IGNORECASE)
+        estimated = int(estimated[0][2:-1])
+        modeled = re.findall("_r2\\d{3}._", resource_name, re.IGNORECASE)
+        modeled = int(modeled[0][2:-2])
+        dataset_dates[data_type] = {
+            "estimated": estimated,
+            "modeled": modeled,
+        }
+    return dataset_dates

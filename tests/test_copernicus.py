@@ -25,9 +25,6 @@ class TestCopernicus:
                     save=False,
                     use_saved=True,
                 )
-                configuration["dataset_dates"] = {
-                    "default": {"modeled": 2023, "estimated": 2019}
-                }
                 copernicus = Copernicus(
                     configuration,
                     retriever,
