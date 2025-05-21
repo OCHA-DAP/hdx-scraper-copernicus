@@ -21,7 +21,7 @@ from hdx.utilities.path import (
 )
 from hdx.utilities.retriever import Retrieve
 
-from hdx.scraper.copernicus.copernicus import Copernicus
+from hdx.scraper.copernicus.ghsl import GHSL
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ _SAVED_DATA_DIR = "saved_data"  # Keep in repo to avoid deletion in /tmp
 _UPDATED_BY_SCRIPT = "HDX Scraper: copernicus"
 
 generate_country_datasets = True
-generate_global_dataset = True
+generate_global_datasets = True
 
 
 def main(
@@ -66,11 +66,11 @@ def main(
                 save=save,
                 use_saved=use_saved,
             )
-            copernicus = Copernicus(
+            ghsl = GHSL(
                 configuration,
                 retriever,
             )
-            updated = copernicus.get_ghs_data(
+            updated = ghsl.get_ghs_data(
                 year,
                 generate_country_datasets,
                 running_on_gha,
@@ -81,8 +81,8 @@ def main(
                 logger.error("Data has been updated, run locally")
                 sys.exit(1)
 
-            if generate_global_dataset:
-                dataset = copernicus.generate_global_dataset()
+            if generate_global_datasets:
+                dataset = ghsl.generate_global_dataset()
                 dataset.update_from_yaml(
                     script_dir_plus_file(
                         join("config", "hdx_dataset_static.yaml"), main
@@ -98,16 +98,16 @@ def main(
                 )
 
             if generate_country_datasets:
-                copernicus.get_tiling_schema()
-                iso3s = copernicus.get_boundaries()
+                ghsl.get_tiling_schema()
+                iso3s = ghsl.get_boundaries()
 
                 for iso3 in iso3s:
                     if iso3 in ["ATA"]:
                         continue
-                    country_data = copernicus.process(iso3)
+                    country_data = ghsl.process(iso3)
                     if not country_data:
                         continue
-                    dataset = copernicus.generate_dataset(iso3)
+                    dataset = ghsl.generate_dataset(iso3)
                     dataset.update_from_yaml(
                         script_dir_plus_file(
                             join("config", "hdx_dataset_static.yaml"), main

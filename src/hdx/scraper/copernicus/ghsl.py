@@ -29,7 +29,7 @@ _MODELED_YEAR_PATTERN = "(?<!\\d)r2\\d{3}(?!\\d)"
 _DATA_YEAR_PATTERN = "(?<!\\d)e2\\d{3}(?!\\d)"
 
 
-class Copernicus:
+class GHSL:
     def __init__(self, configuration: Configuration, retriever: Retrieve):
         self._configuration = configuration
         self._retriever = retriever

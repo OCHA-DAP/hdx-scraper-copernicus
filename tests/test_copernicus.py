@@ -4,7 +4,7 @@ from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
 
-from hdx.scraper.copernicus.copernicus import Copernicus
+from hdx.scraper.copernicus.ghsl import GHSL
 
 
 class TestCopernicus:
@@ -25,18 +25,18 @@ class TestCopernicus:
                     save=False,
                     use_saved=True,
                 )
-                copernicus = Copernicus(
+                ghsl = GHSL(
                     configuration,
                     retriever,
                 )
-                updated = copernicus.get_ghs_data(2024, True, False)
+                updated = ghsl.get_ghs_data(2024, True, False)
                 assert updated is True
-                assert copernicus.data_year == {"built": 2020, "population": 2020}
-                assert copernicus.global_data == {
+                assert ghsl.data_year == {"built": 2020, "population": 2020}
+                assert ghsl.global_data == {
                     "built": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_54009_100/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_54009_100_V1_0.zip",
                     "population": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_POP_GLOBE_R2023A/GHS_POP_E2020_GLOBE_R2023A_54009_100/V1-0/GHS_POP_E2020_GLOBE_R2023A_54009_100_V1_0.zip",
                 }
-                assert copernicus.latest_data == {
+                assert ghsl.latest_data == {
                     "built": [
                         join(
                             tempdir,
@@ -59,7 +59,7 @@ class TestCopernicus:
                     ],
                 }
 
-                dataset = copernicus.generate_global_dataset()
+                dataset = ghsl.generate_global_dataset()
                 assert dataset == {
                     "name": "global-human-settlement-layer-ghsl",
                     "title": "Copernicus Global Human Settlement Layer (GHSL)",
@@ -86,16 +86,16 @@ class TestCopernicus:
                     ],
                 }
 
-                copernicus.get_tiling_schema()
-                assert len(copernicus.tiling_schema) == 375
-                iso3s = copernicus.get_boundaries()
+                ghsl.get_tiling_schema()
+                assert len(ghsl.tiling_schema) == 375
+                iso3s = ghsl.get_boundaries()
                 assert iso3s == ["CUB", "JAM"]
-                assert copernicus.tiles_by_country == {
+                assert ghsl.tiles_by_country == {
                     "CUB": ["R7_C10", "R7_C11"],
                     "JAM": ["R7_C11"],
                 }
 
-                country_data = copernicus.process("CUB")
+                country_data = ghsl.process("CUB")
                 assert country_data == {
                     "built": join(
                         tempdir, "GHS_BUILT_S_E2020_R2023A_54009_100_V1_0_CUB.tif"
@@ -105,7 +105,7 @@ class TestCopernicus:
                     ),
                 }
 
-                dataset = copernicus.generate_dataset("CUB")
+                dataset = ghsl.generate_dataset("CUB")
                 dataset.update_from_yaml(
                     path=join(config_dir, "hdx_dataset_static.yaml")
                 )
