@@ -9,7 +9,6 @@ from typing import Dict, List, Optional
 from zipfile import ZipFile
 
 import rasterio
-from bs4 import BeautifulSoup
 from geopandas import overlay, read_file
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
@@ -20,8 +19,9 @@ from hdx.utilities.retriever import Retrieve
 from rasterio.mask import mask
 from rasterio.merge import merge
 from requests import head
-from shapely.validation import make_valid
 from slugify import slugify
+
+from hdx.scraper.copernicus.utilities import get_lines
 
 logger = logging.getLogger(__name__)
 
@@ -42,12 +42,6 @@ class GHSL:
         self.country_data = {}
         self.data_year = {}
 
-    def get_lines(self, url: str, filename: Optional[str] = None) -> List[str]:
-        text = self._retriever.download_text(url, filename=filename)
-        soup = BeautifulSoup(text, "html.parser")
-        lines = soup.find_all("a")
-        return lines
-
     def get_tiling_schema(self):
         url = self._configuration["tiling_schema"]["url"]
         zip_file_path = self._retriever.download_file(url)
@@ -63,44 +57,16 @@ class GHSL:
         )
         self.tiling_schema = lyr
 
-    def get_boundaries(self):
-        dataset = Dataset.read_from_hdx(self._configuration["boundary_dataset"])
-        resources = dataset.get_resources()
-        for resource in resources:
-            if self._configuration["boundary_resource"] not in resource["name"]:
-                continue
-            if self._retriever.use_saved:
-                file_path = self._retriever.download_file(
-                    resource["url"], filename=resource["name"]
-                )
-            else:
-                folder = (
-                    self._retriever.saved_dir
-                    if self._retriever.save
-                    else self._temp_folder
-                )
-                _, file_path = resource.download(folder)
-            lyr = read_file(file_path)
-            lyr = lyr.to_crs(crs="ESRI:54009")
-            for i, row in lyr.iterrows():
-                if not lyr.geometry[i].is_valid:
-                    lyr.loc[i, "geometry"] = make_valid(lyr.geometry[i])
-                if row["STATUS"] and row["STATUS"][:4] == "Adm.":
-                    lyr.loc[i, "ISO_3"] = row["Color_Code"]
-            lyr = lyr.dissolve(by="ISO_3", as_index=False)
-            lyr = lyr.drop(
-                [f for f in lyr.columns if f.lower() not in ["iso_3", "geometry"]],
-                axis=1,
-            )
-            joined_lyr = overlay(self.tiling_schema, lyr, how="intersection")
-            for i, row in joined_lyr.iterrows():
-                iso = row["ISO_3"]
-                dict_of_lists_add(self.tiles_by_country, iso, row["tile_id"])
-            lyr = loads(lyr.to_json())["features"]
-            for row in lyr:
-                iso = row["properties"]["ISO_3"]
-                self.global_boundaries[iso] = [row["geometry"]]
-            return list(self.global_boundaries.keys())
+    def get_boundaries(self, layer):
+        joined_lyr = overlay(self.tiling_schema, layer, how="intersection")
+        for i, row in joined_lyr.iterrows():
+            iso = row["ISO_3"]
+            dict_of_lists_add(self.tiles_by_country, iso, row["tile_id"])
+        layer = loads(layer.to_json())["features"]
+        for row in layer:
+            iso = row["properties"]["ISO_3"]
+            self.global_boundaries[iso] = [row["geometry"]]
+        return list(self.global_boundaries.keys())
 
     def get_ghs_data(
         self, current_year: int, download_country: bool, running_on_gha: bool
@@ -108,7 +74,7 @@ class GHSL:
         file_patterns = self._configuration["file_patterns"]
         dataset_dates = _get_ghs_dataset_dates(list(file_patterns.keys()))
         base_url = self._configuration["ghsl_url"]
-        lines = self.get_lines(base_url, "ghsl_ftp.txt")
+        lines = get_lines(self._retriever, base_url, "ghsl_ftp.txt")
         for data_type, subfolder_pattern in file_patterns.items():
             subfolders = []
             for line in lines:
@@ -119,7 +85,8 @@ class GHSL:
             subfolder, modeled_year = _select_latest_data(
                 _MODELED_YEAR_PATTERN, subfolders
             )
-            sub_lines = self.get_lines(
+            sub_lines = get_lines(
+                self._retriever,
                 f"{base_url}{subfolder}",
                 filename=f"{subfolder.replace('/', '')}.txt",
             )
@@ -145,7 +112,8 @@ class GHSL:
             global_file = f"{base_url}{subfolder}{subsubfolder}V1-0/{subsubfolder.replace('/', '')}_V1_0.zip"
             self.global_data[data_type] = global_file
             if download_country:
-                tile_lines = self.get_lines(
+                tile_lines = get_lines(
+                    self._retriever,
                     f"{base_url}{subfolder}{subsubfolder}V1-0/tiles/",
                     filename=f"{subsubfolder.replace('/', '')}.txt",
                 )

@@ -5,6 +5,7 @@ from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
 
 from hdx.scraper.copernicus.ghsl import GHSL
+from hdx.scraper.copernicus.utilities import get_boundaries
 
 
 class TestCopernicus:
@@ -88,7 +89,8 @@ class TestCopernicus:
 
                 ghsl.get_tiling_schema()
                 assert len(ghsl.tiling_schema) == 375
-                iso3s = ghsl.get_boundaries()
+                global_boundaries = get_boundaries(configuration, retriever, tempdir)
+                iso3s = ghsl.get_boundaries(global_boundaries)
                 assert iso3s == ["CUB", "JAM"]
                 assert ghsl.tiles_by_country == {
                     "CUB": ["R7_C10", "R7_C11"],

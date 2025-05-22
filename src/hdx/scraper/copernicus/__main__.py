@@ -22,6 +22,7 @@ from hdx.utilities.path import (
 from hdx.utilities.retriever import Retrieve
 
 from hdx.scraper.copernicus.ghsl import GHSL
+from hdx.scraper.copernicus.utilities import get_boundaries
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,7 @@ def main(
                 generate_country_datasets,
                 running_on_gha,
             )
+            global_boundaries = get_boundaries(configuration, retriever, temp_dir)
 
             if ghsl_updated and not running_on_gha:
                 if generate_global_datasets:
@@ -92,7 +94,7 @@ def main(
 
                 if generate_country_datasets:
                     ghsl.get_tiling_schema()
-                    iso3s = ghsl.get_boundaries()
+                    iso3s = ghsl.get_boundaries(global_boundaries)
 
                     for iso3 in iso3s:
                         if iso3 in ["ATA"]:
