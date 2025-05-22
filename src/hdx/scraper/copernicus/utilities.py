@@ -2,7 +2,7 @@ import logging
 from typing import List, Optional
 
 from bs4 import BeautifulSoup
-from geopandas import read_file
+from geopandas import GeoDataFrame, read_file
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.utilities.retriever import Retrieve
@@ -20,7 +20,9 @@ def get_lines(
     return lines
 
 
-def get_boundaries(configuration: Configuration, retriever: Retrieve, temp_folder: str):
+def get_boundaries(
+    configuration: Configuration, retriever: Retrieve, temp_folder: str
+) -> GeoDataFrame:
     dataset = Dataset.read_from_hdx(configuration["boundary_dataset"])
     resources = dataset.get_resources()
     for resource in resources:

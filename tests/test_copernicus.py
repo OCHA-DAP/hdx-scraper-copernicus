@@ -26,8 +26,9 @@ class TestCopernicus:
                     save=False,
                     use_saved=True,
                 )
-                ghsl = GHSL(configuration["ghsl"], retriever)
-                updated = ghsl.get_ghs_data(2024, True, False)
+                global_boundaries = get_boundaries(configuration, retriever, tempdir)
+                ghsl = GHSL(configuration["ghsl"], retriever, global_boundaries)
+                updated = ghsl.get_data(2024, True, False)
                 assert updated is True
                 assert ghsl.data_year == {"built": 2020, "population": 2020}
                 assert ghsl.global_data == {
@@ -86,8 +87,7 @@ class TestCopernicus:
 
                 ghsl.get_tiling_schema()
                 assert len(ghsl.tiling_schema) == 375
-                global_boundaries = get_boundaries(configuration, retriever, tempdir)
-                iso3s = ghsl.get_boundaries(global_boundaries)
+                iso3s = ghsl.get_boundaries()
                 assert iso3s == ["CUB", "JAM"]
                 assert ghsl.tiles_by_country == {
                     "CUB": ["R7_C10", "R7_C11"],

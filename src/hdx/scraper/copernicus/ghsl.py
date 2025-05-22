@@ -9,7 +9,7 @@ from typing import Dict, List, Optional
 from zipfile import ZipFile
 
 import rasterio
-from geopandas import overlay, read_file
+from geopandas import GeoDataFrame, overlay, read_file
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.resource import Resource
@@ -30,10 +30,16 @@ _DATA_YEAR_PATTERN = "(?<!\\d)e2\\d{3}(?!\\d)"
 
 
 class GHSL:
-    def __init__(self, configuration: Configuration, retriever: Retrieve):
+    def __init__(
+        self,
+        configuration: Configuration,
+        retriever: Retrieve,
+        global_boundaries: GeoDataFrame,
+    ):
         self._configuration = configuration
         self._retriever = retriever
         self._temp_folder = retriever.temp_dir
+        self.global_boundaries_original = global_boundaries
         self.tiling_schema = None
         self.global_boundaries = {}
         self.global_data = {}
@@ -57,18 +63,20 @@ class GHSL:
         )
         self.tiling_schema = lyr
 
-    def get_boundaries(self, layer):
-        joined_lyr = overlay(self.tiling_schema, layer, how="intersection")
+    def get_boundaries(self) -> List:
+        joined_lyr = overlay(
+            self.tiling_schema, self.global_boundaries_original, how="intersection"
+        )
         for i, row in joined_lyr.iterrows():
             iso = row["ISO_3"]
             dict_of_lists_add(self.tiles_by_country, iso, row["tile_id"])
-        layer = loads(layer.to_json())["features"]
+        layer = loads(self.global_boundaries_original.to_json())["features"]
         for row in layer:
             iso = row["properties"]["ISO_3"]
             self.global_boundaries[iso] = [row["geometry"]]
         return list(self.global_boundaries.keys())
 
-    def get_ghs_data(
+    def get_data(
         self, current_year: int, download_country: bool, running_on_gha: bool
     ) -> bool:
         file_patterns = self._configuration["file_patterns"]

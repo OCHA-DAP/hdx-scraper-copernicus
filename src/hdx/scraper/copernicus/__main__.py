@@ -67,14 +67,14 @@ def main(
                 save=save,
                 use_saved=use_saved,
             )
-            ghsl = GHSL(configuration["ghsl"], retriever)
-            ghsl_updated = ghsl.get_ghs_data(
+            global_boundaries = get_boundaries(configuration, retriever, temp_dir)
+
+            ghsl = GHSL(configuration["ghsl"], retriever, global_boundaries)
+            ghsl_updated = ghsl.get_data(
                 year,
                 generate_country_datasets,
                 running_on_gha,
             )
-            global_boundaries = get_boundaries(configuration, retriever, temp_dir)
-
             if ghsl_updated and not running_on_gha:
                 if generate_global_datasets:
                     dataset = ghsl.generate_global_dataset()
@@ -94,8 +94,7 @@ def main(
 
                 if generate_country_datasets:
                     ghsl.get_tiling_schema()
-                    iso3s = ghsl.get_boundaries(global_boundaries)
-
+                    iso3s = ghsl.get_boundaries()
                     for iso3 in iso3s:
                         if iso3 in ["ATA"]:
                             continue
