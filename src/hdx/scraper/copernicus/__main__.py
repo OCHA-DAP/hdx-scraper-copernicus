@@ -66,48 +66,16 @@ def main(
                 save=save,
                 use_saved=use_saved,
             )
-            ghsl = GHSL(
-                configuration,
-                retriever,
-            )
-            updated = ghsl.get_ghs_data(
+            ghsl = GHSL(configuration, retriever)
+            ghsl_updated = ghsl.get_ghs_data(
                 year,
                 generate_country_datasets,
                 running_on_gha,
             )
-            if not updated:
-                return
-            if running_on_gha:
-                logger.error("Data has been updated, run locally")
-                sys.exit(1)
 
-            if generate_global_datasets:
-                dataset = ghsl.generate_global_dataset()
-                dataset.update_from_yaml(
-                    script_dir_plus_file(
-                        join("config", "hdx_dataset_static.yaml"), main
-                    )
-                )
-                dataset["notes"] = dataset["notes"].replace("\n", "  \n")
-                dataset.create_in_hdx(
-                    remove_additional_resources=True,
-                    match_resource_order=False,
-                    hxl_update=False,
-                    updated_by_script=_UPDATED_BY_SCRIPT,
-                    batch=info["batch"],
-                )
-
-            if generate_country_datasets:
-                ghsl.get_tiling_schema()
-                iso3s = ghsl.get_boundaries()
-
-                for iso3 in iso3s:
-                    if iso3 in ["ATA"]:
-                        continue
-                    country_data = ghsl.process(iso3)
-                    if not country_data:
-                        continue
-                    dataset = ghsl.generate_dataset(iso3)
+            if ghsl_updated and not running_on_gha:
+                if generate_global_datasets:
+                    dataset = ghsl.generate_global_dataset()
                     dataset.update_from_yaml(
                         script_dir_plus_file(
                             join("config", "hdx_dataset_static.yaml"), main
@@ -121,6 +89,35 @@ def main(
                         updated_by_script=_UPDATED_BY_SCRIPT,
                         batch=info["batch"],
                     )
+
+                if generate_country_datasets:
+                    ghsl.get_tiling_schema()
+                    iso3s = ghsl.get_boundaries()
+
+                    for iso3 in iso3s:
+                        if iso3 in ["ATA"]:
+                            continue
+                        country_data = ghsl.process(iso3)
+                        if not country_data:
+                            continue
+                        dataset = ghsl.generate_dataset(iso3)
+                        dataset.update_from_yaml(
+                            script_dir_plus_file(
+                                join("config", "hdx_dataset_static.yaml"), main
+                            )
+                        )
+                        dataset["notes"] = dataset["notes"].replace("\n", "  \n")
+                        dataset.create_in_hdx(
+                            remove_additional_resources=True,
+                            match_resource_order=False,
+                            hxl_update=False,
+                            updated_by_script=_UPDATED_BY_SCRIPT,
+                            batch=info["batch"],
+                        )
+
+            if ghsl_updated and running_on_gha:
+                logger.error("GHSL data has been updated, run locally")
+                sys.exit(1)
 
 
 if __name__ == "__main__":
