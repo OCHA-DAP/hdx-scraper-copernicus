@@ -26,10 +26,7 @@ class TestCopernicus:
                     save=False,
                     use_saved=True,
                 )
-                ghsl = GHSL(
-                    configuration,
-                    retriever,
-                )
+                ghsl = GHSL(configuration["ghsl"], retriever)
                 updated = ghsl.get_ghs_data(2024, True, False)
                 assert updated is True
                 assert ghsl.data_year == {"built": 2020, "population": 2020}

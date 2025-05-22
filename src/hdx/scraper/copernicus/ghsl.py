@@ -73,7 +73,7 @@ class GHSL:
     ) -> bool:
         file_patterns = self._configuration["file_patterns"]
         dataset_dates = _get_ghs_dataset_dates(list(file_patterns.keys()))
-        base_url = self._configuration["ghsl_url"]
+        base_url = self._configuration["base_url"]
         lines = get_lines(self._retriever, base_url, "ghsl_ftp.txt")
         for data_type, subfolder_pattern in file_patterns.items():
             subfolders = []

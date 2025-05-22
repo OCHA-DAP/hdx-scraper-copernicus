@@ -67,7 +67,7 @@ def main(
                 save=save,
                 use_saved=use_saved,
             )
-            ghsl = GHSL(configuration, retriever)
+            ghsl = GHSL(configuration["ghsl"], retriever)
             ghsl_updated = ghsl.get_ghs_data(
                 year,
                 generate_country_datasets,

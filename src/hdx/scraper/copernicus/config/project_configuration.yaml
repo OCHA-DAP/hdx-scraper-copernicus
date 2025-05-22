@@ -3,27 +3,26 @@ boundary_dataset: "unmap-international-boundaries-geojson"
 
 boundary_resource: "polbnda_int_15m"
 
-ghsl_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
+drought:
+  base_url: "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/"
 
-tiling_schema:
-  url: "https://ghsl.jrc.ec.europa.eu/download/GHSL_data_54009_shapefile.zip"
-  filename: "GHSL2_0_MWD_L1_tile_schema_land.shp"
-
-file_patterns:
-  built: "GHS_BUILT_S_GLOBE"
-  population: "GHS_POP_GLOBE"
-
-resolution: 100
-
-tags:
-  - "facilities-infrastructure"
-  - "populated places-settlements"
-  - "population"
-
-resource_info:
-  built:
-    name: "GHS Built-up Surface"
-    description: "Product: GHS-BUILT-S, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide, Classification: total - residential (RES) & non residential (NRES) classification."
-  population:
-    name: "GHS Population Grid"
-    description: "Product: GHS-POP, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide"
+ghsl:
+  base_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
+  tiling_schema:
+    url: "https://ghsl.jrc.ec.europa.eu/download/GHSL_data_54009_shapefile.zip"
+    filename: "GHSL2_0_MWD_L1_tile_schema_land.shp"
+  file_patterns:
+    built: "GHS_BUILT_S_GLOBE"
+    population: "GHS_POP_GLOBE"
+  resolution: 100
+  tags:
+    - "facilities-infrastructure"
+    - "populated places-settlements"
+    - "population"
+  resource_info:
+    built:
+      name: "GHS Built-up Surface"
+      description: "Product: GHS-BUILT-S, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide, Classification: total - residential (RES) & non residential (NRES) classification."
+    population:
+      name: "GHS Population Grid"
+      description: "Product: GHS-POP, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide"
