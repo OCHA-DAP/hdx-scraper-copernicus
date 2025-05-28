@@ -21,6 +21,7 @@ from hdx.utilities.path import (
 )
 from hdx.utilities.retriever import Retrieve
 
+from hdx.scraper.copernicus.drought import Drought
 from hdx.scraper.copernicus.ghsl import GHSL
 from hdx.scraper.copernicus.utilities import get_boundaries
 
@@ -68,6 +69,46 @@ def main(
                 use_saved=use_saved,
             )
             global_boundaries = get_boundaries(configuration, retriever, temp_dir)
+
+            drought = Drought(configuration["drought"], retriever, global_boundaries)
+            drought.get_data(generate_country_datasets)
+            for data_type in drought.global_data:
+                if generate_global_datasets:
+                    dataset = drought.generate_global_dataset(data_type)
+                    dataset.update_from_yaml(
+                        script_dir_plus_file(
+                            join("config", "hdx_dataset_static.yaml"), main
+                        )
+                    )
+                    dataset["notes"] = dataset["notes"].replace("\n", "  \n")
+                    dataset.create_in_hdx(
+                        remove_additional_resources=True,
+                        match_resource_order=False,
+                        hxl_update=False,
+                        updated_by_script=_UPDATED_BY_SCRIPT,
+                        batch=info["batch"],
+                    )
+                if generate_country_datasets:
+                    for iso3 in global_boundaries:
+                        if iso3 in ["ATA"]:
+                            continue
+                        country_data = drought.process(iso3, data_type)
+                        if not country_data:
+                            continue
+                        dataset = drought.generate_dataset(iso3, data_type)
+                        dataset.update_from_yaml(
+                            script_dir_plus_file(
+                                join("config", "hdx_dataset_static.yaml"), main
+                            )
+                        )
+                        dataset["notes"] = dataset["notes"].replace("\n", "  \n")
+                        dataset.create_in_hdx(
+                            remove_additional_resources=True,
+                            match_resource_order=False,
+                            hxl_update=False,
+                            updated_by_script=_UPDATED_BY_SCRIPT,
+                            batch=info["batch"],
+                        )
 
             ghsl = GHSL(configuration["ghsl"], retriever, global_boundaries)
             ghsl_updated = ghsl.get_data(

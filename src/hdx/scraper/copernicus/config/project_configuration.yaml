@@ -5,6 +5,12 @@ boundary_resource: "polbnda_int_15m"
 
 drought:
   base_url: "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/"
+  file_patterns:
+    drought_tracking: "GDO_Meteorological_Drought_Tracking"
+    fapar: "GDO_Fraction_of_Absorbed_Photosynthetically_Active_Radiation_Anomalies_fAPAR_VIIRS"
+  tags:
+    - "drought"
+    - "environment"
 
 ghsl:
   base_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
