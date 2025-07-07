@@ -139,6 +139,8 @@ class GHSL:
         return True
 
     def process(self, iso3: str) -> Dict | None:
+        if iso3 == "ATA":
+            return None
         logger.info(f"Processing {iso3}")
         country_name = Country.get_country_name_from_iso3(iso3)
         if not country_name:
@@ -188,6 +190,7 @@ class GHSL:
         return self.country_data[iso3]
 
     def generate_global_dataset(self) -> Optional[Dataset]:
+        dataset_info = self._configuration["dataset_info"]
         dataset_name = "global-human-settlement-layer-ghsl"
         dataset_title = "Copernicus Global Human Settlement Layer (GHSL)"
 
@@ -195,8 +198,13 @@ class GHSL:
             {
                 "name": dataset_name,
                 "title": dataset_title,
+                "notes": dataset_info["notes"],
+                "methodology": "Other",
+                "methodology_other": dataset_info["methodology_other"],
+                "caveats": dataset_info["caveats"],
             }
         )
+        dataset.set_expected_update_frequency(dataset_info["data_update_frequency"])
         time_period = [value for _, value in self.data_year.items()]
         dataset.set_time_period_year_range(min(time_period), max(time_period))
         dataset_tags = self._configuration["tags"]
@@ -228,6 +236,7 @@ class GHSL:
         return dataset
 
     def generate_dataset(self, iso3: str) -> Optional[Dataset]:
+        dataset_info = self._configuration["dataset_info"]
         country_name = Country.get_country_name_from_iso3(iso3)
         dataset_name = slugify(f"{iso3}-ghsl")
         dataset_title = (
@@ -238,8 +247,13 @@ class GHSL:
             {
                 "name": dataset_name,
                 "title": dataset_title,
+                "notes": dataset_info["notes"],
+                "methodology": "Other",
+                "methodology_other": dataset_info["methodology_other"],
+                "caveats": dataset_info["caveats"],
             }
         )
+        dataset.set_expected_update_frequency(dataset_info["data_update_frequency"])
         time_period = [value for _, value in self.data_year.items()]
         dataset.set_time_period_year_range(min(time_period), max(time_period))
         dataset_tags = self._configuration["tags"]
