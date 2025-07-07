@@ -121,7 +121,7 @@ packaging==25.0
     # via
     #   geopandas
     #   pyogrio
-pandas==2.3.0
+pandas==2.3.1
     # via geopandas
 petl==1.7.16
     # via frictionless
