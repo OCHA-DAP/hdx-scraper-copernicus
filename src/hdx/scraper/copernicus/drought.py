@@ -49,6 +49,7 @@ class Drought:
 
     def get_data(self, download_country: bool) -> bool:
         file_patterns = self._configuration["file_patterns"]
+        updated = False
         for data_type, file_pattern in file_patterns.items():
             file_type = self._configuration["file_types"][data_type]
             dataset_files = _get_dataset_files(
@@ -75,17 +76,22 @@ class Drought:
                 start_date, end_date = _parse_date(subsubfolder)
                 dict_of_lists_add(self.dates, data_type, start_date)
                 dict_of_lists_add(self.dates, data_type, end_date)
-                if subsubfolder in dataset_files:
-                    continue
                 zip_url = f"{base_url}{subfolder}{subsubfolder}"
                 dict_of_lists_add(self.global_data, data_type, zip_url)
-                if file_type == "GeoJSON" or download_country:
-                    file_path = self._retriever.download_file(zip_url)
+                if file_type == "GeoJSON":
+                    file_path = self._retriever.download_file(
+                        zip_url, filename=basename(zip_url)
+                    )
                     dict_of_lists_add(self.downloaded_data, data_type, file_path)
-
-        if len(self.global_data) == 0:
-            return False
-        return True
+                elif download_country and subsubfolder not in dataset_files:
+                    file_path = self._retriever.download_file(
+                        zip_url, filename=basename(zip_url)
+                    )
+                    dict_of_lists_add(self.downloaded_data, data_type, file_path)
+            global_data = [basename(f) for f in self.global_data[data_type]]
+            if sorted(global_data) != sorted(dataset_files):
+                updated = True
+        return updated
 
     def unzip_data(self, data_type: str) -> Dict:
         file_paths = {}
