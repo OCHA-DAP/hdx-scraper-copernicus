@@ -172,19 +172,49 @@ class TestCopernicus:
                 file_paths = drought.unzip_data("fapar")
                 assert file_paths == {
                     join(tempdir, "fpanv_m_gdo_20250101_20250601_t"): [
-                        "fpanv_m_gdo_20250101_20250601_t/copyright.txt",
-                        "fpanv_m_gdo_20250101_20250601_t/fpanv_m_gdo_20250101_t_300_z01.tif",
-                        "fpanv_m_gdo_20250101_20250601_t/README.txt",
+                        "fpanv_m_gdo_20250101_t_300_z01.tif",
+                        "copyright.txt",
+                        "README.txt",
                     ],
                 }
 
-                # country_data = drought.process("CUB", file_paths)
-                # assert country_data == {}
-                #
-                # dataset = drought.generate_dataset("CUB", "fapar")
-                # assert dataset == {}
-                # resources = dataset.get_resources()
-                # assert resources == {}
+                country_data = drought.process("CUB", file_paths)
+                assert country_data == [
+                    join(tempdir, "cub_fpanv_m_gdo_20250101_20250601_t.zip")
+                ]
+
+                dataset = drought.generate_dataset("CUB", "fapar")
+                assert dataset == {
+                    "name": "cub-anomalies-fapar-viirs",
+                    "title": "Cuba: Copernicus Vegetation Index Anomaly (FAPAR Anomaly)",
+                    "notes": "Fraction of Absorbed Photosynthetically Active Radiation (FAPAR) is a biophysical dimensionless quantity (its values range from 0/no absorption to 1/total absorption) used to assess the greenness and health of vegetation. FAPAR anomalies can be used as an indicator to detect and monitor the impacts of agricultural drought on the growth and productivity of vegetation.  \n  \nThe data is presented in 10-day time composite of the Visible Infrared Imaging Radiometer Suite (VIIRS).",
+                    "methodology": "Other",
+                    "methodology_other": "FAPAR and FAPAR anomalies datasets come as raster files for every 10-day interval. The deviation of the FAPAR values from the long-term mean (anomaly) are calculated at each spatial location (grid-cell), with a reference baseline that ranges from the year 2012 to the last available full year (see Section 3). Negative FAPAR anomalies suggest conditions of relative vegetation stress, especially plant water stress due to drought, during that 10-day interval. In contrast, positive FAPAR anomalies indicate relatively favorable vegetation growth conditions during that 10-day interval.  \nMore information: https://drought.emergency.copernicus.eu/data/factsheets/factsheet_fapar_viirs.pdf",
+                    "caveats": "Variations in the vegetation health and/or cover could be related to stress factors not related to droughts (e.g., plant diseases, pests, hail, flooding). To determine if changes in FAPAR are linked with a drought event or not, FAPAR data should be interpreted jointly with other indicators (as in the EDO Combined Drought Indicator).",
+                    "data_update_frequency": "14",
+                    "dataset_date": "[2024-01-01T00:00:00 TO 2025-06-10T23:59:59]",
+                    "tags": [
+                        {
+                            "name": "drought",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                        {
+                            "name": "environment",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
+                    ],
+                    "groups": [{"name": "cub"}],
+                }
+                resources = dataset.get_resources()
+                assert resources == [
+                    {
+                        "name": "cub_fpanv_m_gdo_20250101_20250601_t.zip",
+                        "description": "Data from 2025-01-01 to 2025-06-10",
+                        "format": "geotiff",
+                        "resource_type": "file.upload",
+                        "url_type": "upload",
+                    }
+                ]
 
                 ghsl = GHSL(configuration["ghsl"], retriever, boundaries_mollweide)
                 updated = ghsl.get_data(2024, True, False)

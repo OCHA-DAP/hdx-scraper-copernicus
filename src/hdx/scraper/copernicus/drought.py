@@ -120,13 +120,13 @@ class Drought:
         iso_geometry = self.global_boundaries[iso3]
         for folder, files in file_paths.items():
             country_folder = join(
-                self._temp_folder, f"{iso3.lower()}-{basename(folder)}"
+                self._temp_folder, f"{iso3.lower()}_{basename(folder)}"
             )
             mkdir(country_folder)
             country_files = []
             for raster_name in files:
-                raster_path = join(folder, raster_name)
-                country_file = join(country_folder, raster_name)
+                raster_path = join(folder, basename(raster_name))
+                country_file = join(country_folder, basename(raster_name))
                 if not raster_name.endswith(".tif"):
                     copy(raster_path, country_folder)
                     country_files.append(country_file)
@@ -156,16 +156,11 @@ class Drought:
                 logger.info(f"No data for {iso3}, skipping")
                 return None
             country_zip = join(
-                self._temp_folder, f"{iso3.lower()}-{basename(folder)}.zip"
+                self._temp_folder, f"{iso3.lower()}_{basename(folder)}.zip"
             )
             with ZipFile(country_zip, "w") as z:
                 for country_file in country_files:
-                    z.write(
-                        country_file,
-                        join(
-                            f"{iso3.lower()}-{basename(folder)}", basename(country_file)
-                        ),
-                    )
+                    z.write(country_file, basename(country_file))
             dict_of_lists_add(self.country_data, iso3, country_zip)
         return self.country_data[iso3]
 
