@@ -114,7 +114,7 @@ class Drought:
         iso_geometry = self.global_boundaries[iso3]
         for folder, files in file_paths.items():
             country_folder = join(
-                self._temp_folder, f"{basename(folder)}-{iso3.lower()}"
+                self._temp_folder, f"{iso3.lower()}-{basename(folder)}"
             )
             mkdir(country_folder)
             country_files = []
@@ -150,14 +150,14 @@ class Drought:
                 logger.info(f"No data for {iso3}, skipping")
                 return None
             country_zip = join(
-                self._temp_folder, f"{basename(folder)}-{iso3.lower()}.zip"
+                self._temp_folder, f"{iso3.lower()}-{basename(folder)}.zip"
             )
             with ZipFile(country_zip, "w") as z:
                 for country_file in country_files:
                     z.write(
                         country_file,
                         join(
-                            f"{basename(folder)}-{iso3.lower()}", basename(country_file)
+                            f"{iso3.lower()}-{basename(folder)}", basename(country_file)
                         ),
                     )
             dict_of_lists_add(self.country_data, iso3, country_zip)
@@ -209,6 +209,41 @@ class Drought:
                     }
                 )
                 dataset.add_update_resource(resource)
+
+        return dataset
+
+    def generate_dataset(self, iso3: str, data_type: str) -> Optional[Dataset]:
+        country_name = Country.get_country_name_from_iso3(iso3)
+        dataset_info = self._configuration["dataset_info"][data_type]
+        dataset = Dataset(
+            {
+                "name": dataset_info["name"].replace("global", iso3.lower()),
+                "title": f"{country_name}: {dataset_info['title']}",
+                "notes": dataset_info["notes"],
+                "methodology": "Other",
+                "methodology_other": dataset_info["methodology_other"],
+                "caveats": dataset_info["caveats"],
+            }
+        )
+        dataset.set_expected_update_frequency(dataset_info["data_update_frequency"])
+        time_period = self.dates[data_type]
+        dataset.set_time_period(min(time_period), _parse_dekad(max(time_period)))
+        dataset_tags = self._configuration["tags"]
+        dataset.add_tags(dataset_tags)
+        dataset.add_country_location(iso3)
+
+        for file_path in self.country_data[iso3]:
+            start_date, end_date = _parse_date(basename(file_path))
+            end_date = _parse_dekad(end_date)
+            resource = Resource(
+                {
+                    "name": basename(file_path),
+                    "description": f"Data from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}",
+                }
+            )
+            resource.set_format("GeoTIFF")
+            resource.set_file_to_upload(file_path)
+            dataset.add_update_resource(resource)
 
         return dataset
 

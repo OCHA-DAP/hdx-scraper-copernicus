@@ -83,7 +83,6 @@ def main(
                                 join("config", "hdx_dataset_static.yaml"), main
                             )
                         )
-                        dataset["notes"] = dataset["notes"].replace("\n", "  \n")
                         dataset.create_in_hdx(
                             remove_additional_resources=True,
                             match_resource_order=False,
@@ -103,7 +102,6 @@ def main(
                                     join("config", "hdx_dataset_static.yaml"), main
                                 )
                             )
-                            dataset["notes"] = dataset["notes"].replace("\n", "  \n")
                             dataset.create_in_hdx(
                                 remove_additional_resources=True,
                                 match_resource_order=False,
