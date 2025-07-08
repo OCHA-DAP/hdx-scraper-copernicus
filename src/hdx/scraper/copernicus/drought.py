@@ -4,16 +4,23 @@
 import logging
 from datetime import datetime, timedelta
 from json import loads
-from typing import List, Optional, Tuple
+from os import mkdir
+from os.path import basename, join
+from shutil import copy
+from typing import Dict, List, Optional, Tuple
+from zipfile import ZipFile
 
+import rasterio
 from dateutil.relativedelta import relativedelta
 from geopandas import GeoDataFrame
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.resource import Resource
+from hdx.location.country import Country
 from hdx.utilities.dateparse import parse_date
 from hdx.utilities.dictandlist import dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
+from rasterio.mask import mask
 
 from hdx.scraper.copernicus.utilities import get_lines
 
@@ -79,6 +86,82 @@ class Drought:
         if len(self.global_data) == 0:
             return False
         return True
+
+    def unzip_data(self, data_type: str) -> Dict:
+        file_paths = {}
+        file_type = self._configuration["file_types"][data_type]
+        if file_type == "GeoJSON":
+            return file_paths
+        for zip_file_path in self.downloaded_data[data_type]:
+            zip_folder = join(self._temp_folder, basename(zip_file_path)[:-4])
+            mkdir(zip_folder)
+            with ZipFile(zip_file_path, "r") as z:
+                file_list = z.namelist()
+                z.extractall(zip_folder)
+            file_paths[zip_folder] = file_list
+        return file_paths
+
+    def process(self, iso3: str, data_type: str, file_paths: Dict) -> Dict | None:
+        if len(file_paths) == 0:
+            return None
+        if iso3 == "ATA":
+            return None
+        logger.info(f"Processing {iso3}")
+        country_name = Country.get_country_name_from_iso3(iso3)
+        if not country_name:
+            logger.error(f"Couldn't find country {iso3}, skipping")
+            return None
+        iso_geometry = self.global_boundaries[iso3]
+        for folder, files in file_paths.items():
+            country_folder = join(
+                self._temp_folder, f"{basename(folder)}-{iso3.lower()}"
+            )
+            mkdir(country_folder)
+            country_files = []
+            for raster_name in files:
+                raster_path = join(folder, raster_name)
+                country_file = join(country_folder, raster_name)
+                if not raster_name.endswith(".tif"):
+                    copy(raster_path, country_folder)
+                    country_files.append(country_file)
+                    continue
+                try:
+                    with rasterio.open(raster_path, "r") as global_raster:
+                        mask_raster, mask_transform = mask(
+                            global_raster, iso_geometry, all_touched=True, crop=True
+                        )
+                        mask_meta = global_raster.meta.copy()
+                except ValueError:
+                    continue
+                mask_meta.update(
+                    {
+                        "height": mask_raster.shape[1],
+                        "width": mask_raster.shape[2],
+                        "transform": mask_transform,
+                    }
+                )
+                with rasterio.open(
+                    country_file, "w", **mask_meta, compress="LZW"
+                ) as dest:
+                    dest.write(mask_raster)
+                country_files.append(country_file)
+            tifs = [f for f in country_files if f.endswith(".tif")]
+            if len(tifs) == 0:
+                logger.info(f"No data for {iso3}, skipping")
+                return None
+            country_zip = join(
+                self._temp_folder, f"{basename(folder)}-{iso3.lower()}.zip"
+            )
+            with ZipFile(country_zip, "w") as z:
+                for country_file in country_files:
+                    z.write(
+                        country_file,
+                        join(
+                            f"{basename(folder)}-{iso3.lower()}", basename(country_file)
+                        ),
+                    )
+            dict_of_lists_add(self.country_data, iso3, country_zip)
+        return self.country_data[iso3]
 
     def generate_global_dataset(self, data_type: str) -> Optional[Dataset]:
         dataset_info = self._configuration["dataset_info"][data_type]
