@@ -26,8 +26,10 @@ class TestCopernicus:
                     save=False,
                     use_saved=True,
                 )
-                global_boundaries = get_boundaries(configuration, retriever, tempdir)
-                ghsl = GHSL(configuration["ghsl"], retriever, global_boundaries)
+                boundaries_wgs, boundaries_mollweide = get_boundaries(
+                    configuration, retriever, tempdir
+                )
+                ghsl = GHSL(configuration["ghsl"], retriever, boundaries_mollweide)
                 updated = ghsl.get_data(2024, True, False)
                 assert updated is True
                 assert ghsl.data_year == {"built": 2020, "population": 2020}

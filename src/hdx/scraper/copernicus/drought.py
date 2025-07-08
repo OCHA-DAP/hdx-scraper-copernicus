@@ -3,7 +3,7 @@
 
 import logging
 from datetime import datetime, timedelta
-from os.path import basename
+from json import loads
 from typing import List, Optional, Tuple
 
 from dateutil.relativedelta import relativedelta
@@ -30,11 +30,15 @@ class Drought:
         self._configuration = configuration
         self._retriever = retriever
         self._temp_folder = retriever.temp_dir
-        self.global_boundaries = global_boundaries
+        self.global_boundaries = {}
         self.global_data = {}
         self.downloaded_data = {}
         self.country_data = {}
         self.dates = {}
+        layer = loads(global_boundaries.to_json())["features"]
+        for row in layer:
+            iso = row["properties"]["ISO_3"]
+            self.global_boundaries[iso] = [row["geometry"]]
 
     def get_data(self, download_country: bool) -> bool:
         file_patterns = self._configuration["file_patterns"]

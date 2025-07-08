@@ -68,9 +68,11 @@ def main(
                 save=save,
                 use_saved=use_saved,
             )
-            global_boundaries = get_boundaries(configuration, retriever, temp_dir)
+            boundaries_wgs, boundaries_mollweide = get_boundaries(
+                configuration, retriever, temp_dir
+            )
 
-            drought = Drought(configuration["drought"], retriever, global_boundaries)
+            drought = Drought(configuration["drought"], retriever, boundaries_wgs)
             drought_updated = drought.get_data(generate_country_datasets)
             if drought_updated:
                 for data_type in drought.global_data:
@@ -109,7 +111,7 @@ def main(
                                 batch=info["batch"],
                             )
 
-            ghsl = GHSL(configuration["ghsl"], retriever, global_boundaries)
+            ghsl = GHSL(configuration["ghsl"], retriever, boundaries_mollweide)
             ghsl_updated = ghsl.get_data(
                 year,
                 generate_country_datasets,
