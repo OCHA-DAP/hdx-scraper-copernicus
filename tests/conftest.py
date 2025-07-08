@@ -60,6 +60,8 @@ def configuration(config_dir):
             {"name": tag}
             # Change tags below to match those needed in tests
             for tag in (
+                "drought",
+                "environment",
                 "facilities-infrastructure",
                 "populated places-settlements",
                 "population",
