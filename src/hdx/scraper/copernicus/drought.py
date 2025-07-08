@@ -190,7 +190,8 @@ class Drought:
 
         file_type = self._configuration["file_types"][data_type]
         if file_type == "GeoJSON":
-            for file_path in self.downloaded_data[data_type]:
+            file_paths = sorted(self.downloaded_data[data_type], reverse=True)
+            for file_path in file_paths:
                 start_date, end_date = _parse_date(basename(file_path))
                 end_date = _parse_dekad(end_date)
                 resource = Resource(
@@ -238,7 +239,8 @@ class Drought:
         dataset.add_tags(dataset_tags)
         dataset.add_country_location(iso3)
 
-        for file_path in self.country_data[iso3]:
+        file_paths = sorted(self.country_data[iso3], reverse=True)
+        for file_path in file_paths:
             start_date, end_date = _parse_date(basename(file_path))
             end_date = _parse_dekad(end_date)
             resource = Resource(
