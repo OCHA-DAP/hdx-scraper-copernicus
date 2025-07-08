@@ -93,7 +93,7 @@ def main(
                     if generate_country_datasets:
                         file_paths = drought.unzip_data(data_type)
                         for iso3 in drought.global_boundaries:
-                            country_data = drought.process(iso3, data_type, file_paths)
+                            country_data = drought.process(iso3, file_paths)
                             if not country_data:
                                 continue
                             dataset = drought.generate_dataset(iso3, data_type)

@@ -107,7 +107,7 @@ class Drought:
             file_paths[zip_folder] = file_list
         return file_paths
 
-    def process(self, iso3: str, data_type: str, file_paths: Dict) -> Dict | None:
+    def process(self, iso3: str, file_paths: Dict) -> Dict | None:
         if len(file_paths) == 0:
             return None
         if iso3 == "ATA":
