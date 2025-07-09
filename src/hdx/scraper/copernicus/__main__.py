@@ -33,6 +33,7 @@ _UPDATED_BY_SCRIPT = "HDX Scraper: copernicus"
 
 generate_country_datasets = True
 generate_global_datasets = True
+force_update = False
 
 
 def main(
@@ -73,7 +74,7 @@ def main(
             )
 
             drought = Drought(configuration["drought"], retriever, boundaries_wgs)
-            drought_updated = drought.get_data(generate_country_datasets)
+            drought_updated = drought.get_data(generate_country_datasets, force_update)
             if drought_updated:
                 for data_type in drought.global_data:
                     if generate_global_datasets:
@@ -85,7 +86,7 @@ def main(
                         )
                         dataset.create_in_hdx(
                             remove_additional_resources=True,
-                            match_resource_order=False,
+                            match_resource_order=True,
                             hxl_update=False,
                             updated_by_script=_UPDATED_BY_SCRIPT,
                             batch=info["batch"],
@@ -109,6 +110,7 @@ def main(
                                 updated_by_script=_UPDATED_BY_SCRIPT,
                                 batch=info["batch"],
                             )
+                            drought.clean_up_resources(iso3, dataset["name"], data_type)
 
             ghsl = GHSL(configuration["ghsl"], retriever, boundaries_mollweide)
             ghsl_updated = ghsl.get_data(

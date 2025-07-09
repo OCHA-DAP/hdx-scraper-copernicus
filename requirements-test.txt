@@ -24,7 +24,7 @@ bs4==0.0.2
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-certifi==2025.6.15
+certifi==2025.7.9
     # via
     #   -c requirements.txt
     #   pyogrio

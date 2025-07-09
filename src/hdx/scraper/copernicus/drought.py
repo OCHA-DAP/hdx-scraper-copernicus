@@ -47,7 +47,7 @@ class Drought:
             iso = row["properties"]["ISO_3"]
             self.global_boundaries[iso] = [row["geometry"]]
 
-    def get_data(self, download_country: bool) -> bool:
+    def get_data(self, download_country: bool, force_update: bool = False) -> bool:
         file_patterns = self._configuration["file_patterns"]
         updated = False
         for data_type, file_pattern in file_patterns.items():
@@ -55,6 +55,8 @@ class Drought:
             dataset_files = _get_dataset_files(
                 self._configuration["dataset_info"][data_type]["name"]
             )
+            if force_update:
+                dataset_files = []
             base_url = f"{self._configuration['base_url']}{file_pattern}/"
             lines = get_lines(self._retriever, base_url, f"drought_{data_type}_ftp.txt")
             subfolders = []
@@ -199,7 +201,8 @@ class Drought:
                 resource.set_file_to_upload(file_path)
                 dataset.add_update_resource(resource)
         elif file_type == "GeoTIFF":
-            for file_url in self.global_data[data_type]:
+            file_urls = sorted(self.global_data[data_type], reverse=True)
+            for file_url in file_urls:
                 start_date, end_date = _parse_date(basename(file_url))
                 end_date = _parse_dekad(end_date)
                 resource = Resource(
@@ -249,6 +252,23 @@ class Drought:
             dataset.add_update_resource(resource)
 
         return dataset
+
+    def clean_up_resources(self, iso3: str, dataset_name: str, data_type: str) -> None:
+        # remove any resources that are not in the global data list
+        global_data = [
+            f"{iso3.lower()}_{basename(f)}" for f in self.global_data[data_type]
+        ]
+        dataset = Dataset.read_from_hdx(dataset_name)
+        resources = dataset.get_resources()
+        for resource in resources:
+            if resource["name"] not in global_data:
+                resource.delete_from_hdx()
+        # reorder resources
+        dataset = Dataset.read_from_hdx(dataset_name)
+        resources = dataset.get_resources()
+        resources = sorted(resources, key=lambda d: d["name"], reverse=True)
+        resource_ids = [resource["id"] for resource in resources]
+        dataset.reorder_resources(resource_ids, hxl_update=False)
 
 
 def _get_dataset_files(dataset_name: str) -> List:
