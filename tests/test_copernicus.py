@@ -92,7 +92,7 @@ class TestCopernicus:
                     "methodology": "Other",
                     "methodology_other": "https://drought.emergency.copernicus.eu/data/factsheets/factsheet_met_drought_tracking.pdf",
                     "caveats": "A range of different degrees of clustering can be obtained using different model settings and parameterization, meaning that a same parameterization at the global scale can likely result in overestimation/underestimation of drought events in certain areas.",
-                    "data_update_frequency": "14",
+                    "data_update_frequency": "30",
                     "dataset_date": "[2024-01-01T00:00:00 TO 2025-06-20T23:59:59]",
                     "tags": [
                         {
@@ -132,7 +132,7 @@ class TestCopernicus:
                     "methodology": "Other",
                     "methodology_other": "FAPAR and FAPAR anomalies datasets come as raster files for every 10-day interval. The deviation of the FAPAR values from the long-term mean (anomaly) are calculated at each spatial location (grid-cell), with a reference baseline that ranges from the year 2012 to the last available full year (see Section 3). Negative FAPAR anomalies suggest conditions of relative vegetation stress, especially plant water stress due to drought, during that 10-day interval. In contrast, positive FAPAR anomalies indicate relatively favorable vegetation growth conditions during that 10-day interval.  \nMore information: https://drought.emergency.copernicus.eu/data/factsheets/factsheet_fapar_viirs.pdf",
                     "caveats": "Variations in the vegetation health and/or cover could be related to stress factors not related to droughts (e.g., plant diseases, pests, hail, flooding). To determine if changes in FAPAR are linked with a drought event or not, FAPAR data should be interpreted jointly with other indicators (as in the EDO Combined Drought Indicator).",
-                    "data_update_frequency": "14",
+                    "data_update_frequency": "30",
                     "dataset_date": "[2024-01-01T00:00:00 TO 2025-06-10T23:59:59]",
                     "tags": [
                         {
@@ -191,7 +191,7 @@ class TestCopernicus:
                     "methodology": "Other",
                     "methodology_other": "FAPAR and FAPAR anomalies datasets come as raster files for every 10-day interval. The deviation of the FAPAR values from the long-term mean (anomaly) are calculated at each spatial location (grid-cell), with a reference baseline that ranges from the year 2012 to the last available full year (see Section 3). Negative FAPAR anomalies suggest conditions of relative vegetation stress, especially plant water stress due to drought, during that 10-day interval. In contrast, positive FAPAR anomalies indicate relatively favorable vegetation growth conditions during that 10-day interval.  \nMore information: https://drought.emergency.copernicus.eu/data/factsheets/factsheet_fapar_viirs.pdf",
                     "caveats": "Variations in the vegetation health and/or cover could be related to stress factors not related to droughts (e.g., plant diseases, pests, hail, flooding). To determine if changes in FAPAR are linked with a drought event or not, FAPAR data should be interpreted jointly with other indicators (as in the EDO Combined Drought Indicator).",
-                    "data_update_frequency": "14",
+                    "data_update_frequency": "30",
                     "dataset_date": "[2024-01-01T00:00:00 TO 2025-06-10T23:59:59]",
                     "tags": [
                         {
