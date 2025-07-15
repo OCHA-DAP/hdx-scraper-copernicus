@@ -24,7 +24,7 @@ bs4==0.0.2
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-certifi==2025.7.9
+certifi==2025.7.14
     # via
     #   -c requirements.txt
     #   pyogrio
@@ -97,11 +97,11 @@ hdx-python-api==6.4.5
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-hdx-python-country==3.9.5
+hdx-python-country==3.9.6
     # via
     #   -c requirements.txt
     #   hdx-python-api
-hdx-python-utilities==3.8.7
+hdx-python-utilities==3.8.8
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
@@ -210,7 +210,7 @@ pandas==2.3.1
     # via
     #   -c requirements.txt
     #   geopandas
-petl==1.7.16
+petl==1.7.17
     # via
     #   -c requirements.txt
     #   frictionless
