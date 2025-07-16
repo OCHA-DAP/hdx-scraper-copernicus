@@ -21,7 +21,9 @@ from hdx.utilities.path import (
 )
 from hdx.utilities.retriever import Retrieve
 
-from hdx.scraper.copernicus.copernicus import Copernicus
+from hdx.scraper.copernicus.drought import Drought
+from hdx.scraper.copernicus.ghsl import GHSL
+from hdx.scraper.copernicus.utilities import get_boundaries
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +32,8 @@ _SAVED_DATA_DIR = "saved_data"  # Keep in repo to avoid deletion in /tmp
 _UPDATED_BY_SCRIPT = "HDX Scraper: copernicus"
 
 generate_country_datasets = True
-generate_global_dataset = True
+generate_global_datasets = True
+force_update = False
 
 
 def main(
@@ -66,48 +69,58 @@ def main(
                 save=save,
                 use_saved=use_saved,
             )
-            copernicus = Copernicus(
-                configuration,
-                retriever,
+            boundaries_wgs, boundaries_mollweide = get_boundaries(
+                configuration, retriever, temp_dir
             )
-            updated = copernicus.get_ghs_data(
+
+            drought = Drought(configuration["drought"], retriever, boundaries_wgs)
+            drought_updated = drought.get_data(generate_country_datasets, force_update)
+            if drought_updated:
+                for data_type in drought.global_data:
+                    if generate_global_datasets:
+                        dataset = drought.generate_global_dataset(data_type)
+                        dataset.update_from_yaml(
+                            script_dir_plus_file(
+                                join("config", "hdx_dataset_static.yaml"), main
+                            )
+                        )
+                        dataset.create_in_hdx(
+                            remove_additional_resources=True,
+                            match_resource_order=True,
+                            hxl_update=False,
+                            updated_by_script=_UPDATED_BY_SCRIPT,
+                            batch=info["batch"],
+                        )
+                    if generate_country_datasets:
+                        file_paths = drought.unzip_data(data_type)
+                        for iso3 in drought.global_boundaries:
+                            country_data = drought.process(iso3, file_paths)
+                            if not country_data:
+                                continue
+                            dataset = drought.generate_dataset(iso3, data_type)
+                            dataset.update_from_yaml(
+                                script_dir_plus_file(
+                                    join("config", "hdx_dataset_static.yaml"), main
+                                )
+                            )
+                            dataset.create_in_hdx(
+                                remove_additional_resources=False,
+                                match_resource_order=False,
+                                hxl_update=False,
+                                updated_by_script=_UPDATED_BY_SCRIPT,
+                                batch=info["batch"],
+                            )
+                            drought.clean_up_resources(iso3, dataset["name"], data_type)
+
+            ghsl = GHSL(configuration["ghsl"], retriever, boundaries_mollweide)
+            ghsl_updated = ghsl.get_data(
                 year,
                 generate_country_datasets,
                 running_on_gha,
             )
-            if not updated:
-                return
-            if running_on_gha:
-                logger.error("Data has been updated, run locally")
-                sys.exit(1)
-
-            if generate_global_dataset:
-                dataset = copernicus.generate_global_dataset()
-                dataset.update_from_yaml(
-                    script_dir_plus_file(
-                        join("config", "hdx_dataset_static.yaml"), main
-                    )
-                )
-                dataset["notes"] = dataset["notes"].replace("\n", "  \n")
-                dataset.create_in_hdx(
-                    remove_additional_resources=True,
-                    match_resource_order=False,
-                    hxl_update=False,
-                    updated_by_script=_UPDATED_BY_SCRIPT,
-                    batch=info["batch"],
-                )
-
-            if generate_country_datasets:
-                copernicus.get_tiling_schema()
-                iso3s = copernicus.get_boundaries()
-
-                for iso3 in iso3s:
-                    if iso3 in ["ATA"]:
-                        continue
-                    country_data = copernicus.process(iso3)
-                    if not country_data:
-                        continue
-                    dataset = copernicus.generate_dataset(iso3)
+            if ghsl_updated and not running_on_gha:
+                if generate_global_datasets:
+                    dataset = ghsl.generate_global_dataset()
                     dataset.update_from_yaml(
                         script_dir_plus_file(
                             join("config", "hdx_dataset_static.yaml"), main
@@ -121,6 +134,32 @@ def main(
                         updated_by_script=_UPDATED_BY_SCRIPT,
                         batch=info["batch"],
                     )
+
+                if generate_country_datasets:
+                    ghsl.get_tiling_schema()
+                    iso3s = ghsl.get_boundaries()
+                    for iso3 in iso3s:
+                        country_data = ghsl.process(iso3)
+                        if not country_data:
+                            continue
+                        dataset = ghsl.generate_dataset(iso3)
+                        dataset.update_from_yaml(
+                            script_dir_plus_file(
+                                join("config", "hdx_dataset_static.yaml"), main
+                            )
+                        )
+                        dataset["notes"] = dataset["notes"].replace("\n", "  \n")
+                        dataset.create_in_hdx(
+                            remove_additional_resources=True,
+                            match_resource_order=False,
+                            hxl_update=False,
+                            updated_by_script=_UPDATED_BY_SCRIPT,
+                            batch=info["batch"],
+                        )
+
+            if ghsl_updated and running_on_gha:
+                logger.error("GHSL data has been updated, run locally")
+                sys.exit(1)
 
 
 if __name__ == "__main__":

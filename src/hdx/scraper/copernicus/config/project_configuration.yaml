@@ -3,27 +3,55 @@ boundary_dataset: "unmap-international-boundaries-geojson"
 
 boundary_resource: "polbnda_int_15m"
 
-ghsl_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
+drought:
+  base_url: "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/"
+  file_patterns:
+    drought_tracking: "GDO_Meteorological_Drought_Tracking"
+    fapar: "GDO_Fraction_of_Absorbed_Photosynthetically_Active_Radiation_Anomalies_fAPAR_VIIRS"
+  tags:
+    - "drought"
+    - "environment"
+  file_types:
+    drought_tracking: "GeoJSON"
+    fapar: "GeoTIFF"
+  dataset_info:
+    drought_tracking:
+      name: "global-meteorological-drought-tracking"
+      title: "Copernicus Meteorological Drought Tracking (ERA5)"
+      notes: "The Indicator for Meteorological Drought Tracking provides a clear spatio-temporal identification of persistent low-precipitation conditions at the global scale and at near real-time. It provides the outline and the duration and total spatial extent of drought clusters.  \n  \nThe indicator is based on the Standardized Precipitation Index (SPI) for 3-months accumulation periods (i.e. SPI-3). The SPI indicator is derived from the ERA5 fifth generation reanalysis for the global climate and weather of the ECMWF, with baseline 1991-2020. Drought events are identified by means of a three dimensional density-based clustering algorithm (DBSCAN)."
+      methodology_other: "See [factsheet](https://drought.emergency.copernicus.eu/data/factsheets/factsheet_met_drought_tracking.pdf)"
+      caveats: "A range of different degrees of clustering can be obtained using different model settings and parameterization, meaning that a same parameterization at the global scale can likely result in overestimation/underestimation of drought events in certain areas."
+      data_update_frequency: 30
+    fapar:
+      name: "global-anomalies-fapar-viirs"
+      title: "Copernicus Vegetation Index Anomaly (FAPAR Anomaly)"
+      notes: "Fraction of Absorbed Photosynthetically Active Radiation (FAPAR) is a biophysical dimensionless quantity (its values range from 0/no absorption to 1/total absorption) used to assess the greenness and health of vegetation. FAPAR anomalies can be used as an indicator to detect and monitor the impacts of agricultural drought on the growth and productivity of vegetation.  \n  \nThe data is presented in 10-day time composite of the Visible Infrared Imaging Radiometer Suite (VIIRS)."
+      methodology_other: "FAPAR and FAPAR anomalies datasets come as raster files for every 10-day interval. The deviation of the FAPAR values from the long-term mean (anomaly) are calculated at each spatial location (grid-cell), with a reference baseline that ranges from the year 2012 to the last available full year (see Section 3). Negative FAPAR anomalies suggest conditions of relative vegetation stress, especially plant water stress due to drought, during that 10-day interval. In contrast, positive FAPAR anomalies indicate relatively favorable vegetation growth conditions during that 10-day interval.  \n[More information](https://drought.emergency.copernicus.eu/data/factsheets/factsheet_fapar_viirs.pdf)"
+      caveats: "Variations in the vegetation health and/or cover could be related to stress factors not related to droughts (e.g., plant diseases, pests, hail, flooding). To determine if changes in FAPAR are linked with a drought event or not, FAPAR data should be interpreted jointly with other indicators (as in the EDO Combined Drought Indicator)."
+      data_update_frequency: 30
 
-tiling_schema:
-  url: "https://ghsl.jrc.ec.europa.eu/download/GHSL_data_54009_shapefile.zip"
-  filename: "GHSL2_0_MWD_L1_tile_schema_land.shp"
-
-file_patterns:
-  built: "GHS_BUILT_S_GLOBE"
-  population: "GHS_POP_GLOBE"
-
-resolution: 100
-
-tags:
-  - "facilities-infrastructure"
-  - "populated places-settlements"
-  - "population"
-
-resource_info:
-  built:
-    name: "GHS Built-up Surface"
-    description: "Product: GHS-BUILT-S, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide, Classification: total - residential (RES) & non residential (NRES) classification."
-  population:
-    name: "GHS Population Grid"
-    description: "Product: GHS-POP, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide"
+ghsl:
+  base_url: "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/"
+  tiling_schema:
+    url: "https://ghsl.jrc.ec.europa.eu/download/GHSL_data_54009_shapefile.zip"
+    filename: "GHSL2_0_MWD_L1_tile_schema_land.shp"
+  file_patterns:
+    built: "GHS_BUILT_S_GLOBE"
+    population: "GHS_POP_GLOBE"
+  resolution: 100
+  tags:
+    - "facilities-infrastructure"
+    - "populated places-settlements"
+    - "population"
+  dataset_info:
+    notes: "Open and free data for assessing the human presence on the planet.\r\nThe Global Human Settlement Layer (GHSL) project produces global spatial information, evidence-based analytics, and knowledge describing the human presence on the planet. The GHSL relies on the design and implementation of spatial data processing technologies that allow automatic data analytics and information extraction from large amounts of heterogeneous geospatial data including global, fine-scale satellite image data streams, census data, and crowd sourced or volunteered geographic information sources.  \r\nThe JRC, together with the Directorate-General for Regional and Urban Policy (DG REGIO) and Directorate-General for Defence Industry and Space (DG DEFIS) are working towards a regular and operational monitoring of global built-up and population based on the processing of Sentinel Earth Observation data produced by European Copernicus space program. In addition, the EU Agency for the Space Programme (EUSPA) undertakes activities related to user uptake of data, information and services."
+    methodology_other: "The GHSL relies on the design and implementation of spatial data processing technologies that allow automatic data analytics and information extraction from large amounts of heterogeneous geospatial data including global, fine-scale satellite image data streams, census data, and crowd sourced or volunteered geographic information sources.  \r\n\r\nMethodology [link](https://human-settlement.emergency.copernicus.eu/documents/GHSL_Data_Package_2023.pdf?t=1727170839)."
+    caveats: "Pesaresi M., Politis P. (2023): GHS-BUILT-S R2023A - GHS built-up surface grid, derived from Sentinel2 composite and Landsat, multitemporal (1975-2030). European Commission, Joint Research Centre (JRC)\r\nPID: https://data.europa.eu/89h/9f06f36f-4b11-47ec-abb0-4f8b7b1d72ea\r\ndoi:10.2905/9F06F36F-4B11-47EC-ABB0-4F8B7B1D72EA \r\n\r\nSchiavina M., Freire S., Carioli A., MacManus K. (2023): GHS-POP R2023A - GHS population grid multitemporal (1975-2030). European Commission, Joint Research Centre (JRC)\r\nPID: https://data.europa.eu/89h/2ff68a52-5b5b-4a22-8f40-c41da8332cfe\r\ndoi:10.2905/2FF68A52-5B5B-4A22-8F40-C41DA8332CFE \r\n"
+    data_update_frequency: 365
+  resource_info:
+    built:
+      name: "GHS Built-up Surface"
+      description: "Product: GHS-BUILT-S, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide, Classification: total - residential (RES) & non residential (NRES) classification."
+    population:
+      name: "GHS Population Grid"
+      description: "Product: GHS-POP, Epoch: YYYY, Resolution: 100m, Coordinate system: Mollweide"
