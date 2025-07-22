@@ -50,10 +50,7 @@ def main(
         None
     """
     configuration = Configuration.read()
-    if not User.check_current_user_organization_access("copernicus", "create_dataset"):
-        raise PermissionError(
-            "API Token does not give access to Copernicus organisation!"
-        )
+    User.check_current_user_write_access("copernicus")
 
     running_on_gha = False if getenv("GITHUB_ACTIONS") is None else True
     with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
