@@ -100,7 +100,7 @@ class Drought:
         file_type = self._configuration["file_types"][data_type]
         if file_type == "GeoJSON":
             return file_paths
-        for zip_file_path in self.downloaded_data[data_type]:
+        for zip_file_path in self.downloaded_data.get(data_type, []):
             zip_folder = join(self._temp_folder, basename(zip_file_path)[:-4])
             mkdir(zip_folder)
             with ZipFile(zip_file_path, "r") as z:

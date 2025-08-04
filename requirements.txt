@@ -15,7 +15,7 @@ beautifulsoup4==4.13.4
     # via bs4
 bs4==0.0.2
     # via hdx-scraper-copernicus (pyproject.toml)
-certifi==2025.7.14
+certifi==2025.8.3
     # via
     #   pyogrio
     #   pyproj
@@ -45,7 +45,7 @@ docopt==0.6.2
     # via
     #   ckanapi
     #   num2words
-docutils==0.21.2
+docutils==0.22
     # via defopt
 email-validator==2.2.0
     # via hdx-python-api
@@ -55,11 +55,11 @@ frictionless==5.18.1
     # via hdx-python-utilities
 geopandas==1.1.1
     # via hdx-scraper-copernicus (pyproject.toml)
-hdx-python-api==6.4.5
+hdx-python-api==6.4.6
     # via hdx-scraper-copernicus (pyproject.toml)
 hdx-python-country==3.9.6
     # via hdx-python-api
-hdx-python-utilities==3.8.8
+hdx-python-utilities==3.8.9
     # via
     #   hdx-scraper-copernicus (pyproject.toml)
     #   hdx-python-api
@@ -82,7 +82,7 @@ jsonlines==4.0.0
     # via hdx-python-utilities
 jsonpath-ng==1.7.0
     # via libhxl
-jsonschema==4.24.0
+jsonschema==4.25.0
     # via
     #   frictionless
     #   tableschema-to-template
@@ -108,7 +108,7 @@ more-itertools==10.7.0
     # via inflect
 num2words==0.5.14
     # via quantulum3
-numpy==2.3.1
+numpy==2.3.2
     # via
     #   geopandas
     #   pandas
@@ -137,7 +137,7 @@ pydantic-core==2.33.2
     # via pydantic
 pygments==2.19.2
     # via rich
-pyogrio==0.11.0
+pyogrio==0.11.1
     # via geopandas
 pyparsing==3.2.3
     # via rasterio
@@ -184,7 +184,7 @@ requests-file==2.1.0
     # via hdx-python-utilities
 rfc3986==2.0.0
     # via frictionless
-rich==14.0.0
+rich==14.1.0
     # via typer
 rpds-py==0.26.0
     # via
