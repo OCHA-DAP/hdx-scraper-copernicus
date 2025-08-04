@@ -24,7 +24,7 @@ bs4==0.0.2
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-certifi==2025.7.14
+certifi==2025.8.3
     # via
     #   -c requirements.txt
     #   pyogrio
@@ -58,7 +58,7 @@ cligj==0.7.2
     # via
     #   -c requirements.txt
     #   rasterio
-coverage==7.9.2
+coverage==7.10.2
     # via pytest-cov
 defopt==7.0.0
     # via
@@ -73,7 +73,7 @@ docopt==0.6.2
     #   -c requirements.txt
     #   ckanapi
     #   num2words
-docutils==0.21.2
+docutils==0.22
     # via
     #   -c requirements.txt
     #   defopt
@@ -93,7 +93,7 @@ geopandas==1.1.1
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
-hdx-python-api==6.4.5
+hdx-python-api==6.4.6
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
@@ -101,7 +101,7 @@ hdx-python-country==3.9.6
     # via
     #   -c requirements.txt
     #   hdx-python-api
-hdx-python-utilities==3.8.8
+hdx-python-utilities==3.8.9
     # via
     #   -c requirements.txt
     #   hdx-scraper-copernicus (pyproject.toml)
@@ -142,7 +142,7 @@ jsonpath-ng==1.7.0
     # via
     #   -c requirements.txt
     #   libhxl
-jsonschema==4.24.0
+jsonschema==4.25.0
     # via
     #   -c requirements.txt
     #   frictionless
@@ -188,7 +188,7 @@ num2words==0.5.14
     # via
     #   -c requirements.txt
     #   quantulum3
-numpy==2.3.1
+numpy==2.3.2
     # via
     #   -c requirements.txt
     #   geopandas
@@ -240,7 +240,7 @@ pygments==2.19.2
     #   -c requirements.txt
     #   pytest
     #   rich
-pyogrio==0.11.0
+pyogrio==0.11.1
     # via
     #   -c requirements.txt
     #   geopandas
@@ -320,7 +320,7 @@ rfc3986==2.0.0
     # via
     #   -c requirements.txt
     #   frictionless
-rich==14.0.0
+rich==14.1.0
     # via
     #   -c requirements.txt
     #   typer
