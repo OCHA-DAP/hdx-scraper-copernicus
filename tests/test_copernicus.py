@@ -112,15 +112,11 @@ class TestCopernicus:
                         "name": "jspa3_m_wld_20250101_20250611_t.zip",
                         "description": "Data from 2025-01-01 to 2025-06-20",
                         "format": "geojson",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "name": "jspa3_m_wld_20240101_20241221_t.zip",
                         "description": "Data from 2024-01-01 to 2024-12-31",
                         "format": "geojson",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                 ]
 
