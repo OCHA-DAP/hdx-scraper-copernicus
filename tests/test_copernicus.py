@@ -148,13 +148,13 @@ class TestCopernicus:
                         "name": "fpanv_m_gdo_20250101_20250601_t.zip",
                         "description": "Data from 2025-01-01 to 2025-06-10",
                         "url": "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/GDO_Fraction_of_Absorbed_Photosynthetically_Active_Radiation_Anomalies_fAPAR_VIIRS/ver3-0-0/fpanv_m_gdo_20250101_20250601_t.zip",
-                        "format": "GeoTIFF",
+                        "format": "geotiff",
                     },
                     {
                         "name": "fpanv_m_gdo_20240101_20241221_t.zip",
                         "description": "Data from 2024-01-01 to 2024-12-31",
                         "url": "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/GDO_Fraction_of_Absorbed_Photosynthetically_Active_Radiation_Anomalies_fAPAR_VIIRS/ver3-0-0/fpanv_m_gdo_20240101_20241221_t.zip",
-                        "format": "GeoTIFF",
+                        "format": "geotiff",
                     },
                 ]
 
@@ -202,7 +202,7 @@ class TestCopernicus:
                     {
                         "name": "cub_fpanv_m_gdo_20250101_20250601_t.zip",
                         "description": "Data from 2025-01-01 to 2025-06-10",
-                        "format": "GeoTIFF",
+                        "format": "geotiff",
                     }
                 ]
 
@@ -330,11 +330,11 @@ class TestCopernicus:
                     {
                         "name": "GHS Built-up Surface",
                         "description": "Product: GHS-BUILT-S, Epoch: 2020, Resolution: 100m, Coordinate system: Mollweide, Classification: total - residential (RES) & non residential (NRES) classification.",
-                        "format": "GeoTIFF",
+                        "format": "geotiff",
                     },
                     {
                         "name": "GHS Population Grid",
                         "description": "Product: GHS-POP, Epoch: 2020, Resolution: 100m, Coordinate system: Mollweide",
-                        "format": "GeoTIFF",
+                        "format": "geotiff",
                     },
                 ]

@@ -210,9 +210,9 @@ class Drought:
                         "name": basename(file_url),
                         "description": f"Data from {start_date.strftime('%Y-%m-%d')} to {end_date.strftime('%Y-%m-%d')}",
                         "url": file_url,
-                        "format": "GeoTIFF",
                     }
                 )
+                resource.set_format(file_type)
                 dataset.add_update_resource(resource)
 
         return dataset
