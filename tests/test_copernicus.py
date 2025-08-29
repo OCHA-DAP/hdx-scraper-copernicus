@@ -112,15 +112,11 @@ class TestCopernicus:
                         "name": "jspa3_m_wld_20250101_20250611_t.zip",
                         "description": "Data from 2025-01-01 to 2025-06-20",
                         "format": "geojson",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "name": "jspa3_m_wld_20240101_20241221_t.zip",
                         "description": "Data from 2024-01-01 to 2024-12-31",
                         "format": "geojson",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                 ]
 
@@ -153,16 +149,12 @@ class TestCopernicus:
                         "description": "Data from 2025-01-01 to 2025-06-10",
                         "url": "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/GDO_Fraction_of_Absorbed_Photosynthetically_Active_Radiation_Anomalies_fAPAR_VIIRS/ver3-0-0/fpanv_m_gdo_20250101_20250601_t.zip",
                         "format": "geotiff",
-                        "resource_type": "api",
-                        "url_type": "api",
                     },
                     {
                         "name": "fpanv_m_gdo_20240101_20241221_t.zip",
                         "description": "Data from 2024-01-01 to 2024-12-31",
                         "url": "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/GDO_Fraction_of_Absorbed_Photosynthetically_Active_Radiation_Anomalies_fAPAR_VIIRS/ver3-0-0/fpanv_m_gdo_20240101_20241221_t.zip",
                         "format": "geotiff",
-                        "resource_type": "api",
-                        "url_type": "api",
                     },
                 ]
 
@@ -211,8 +203,6 @@ class TestCopernicus:
                         "name": "cub_fpanv_m_gdo_20250101_20250601_t.zip",
                         "description": "Data from 2025-01-01 to 2025-06-10",
                         "format": "geotiff",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     }
                 ]
 
@@ -341,14 +331,10 @@ class TestCopernicus:
                         "name": "GHS Built-up Surface",
                         "description": "Product: GHS-BUILT-S, Epoch: 2020, Resolution: 100m, Coordinate system: Mollweide, Classification: total - residential (RES) & non residential (NRES) classification.",
                         "format": "geotiff",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "name": "GHS Population Grid",
                         "description": "Product: GHS-POP, Epoch: 2020, Resolution: 100m, Coordinate system: Mollweide",
                         "format": "geotiff",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                 ]

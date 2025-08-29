@@ -139,7 +139,7 @@ class GHSL:
         return True
 
     def process(self, iso3: str) -> Dict | None:
-        if iso3 == "ATA":
+        if iso3 in self._configuration["skip_countries"]:
             return None
         logger.info(f"Processing {iso3}")
         country_name = Country.get_country_name_from_iso3(iso3)
@@ -228,9 +228,9 @@ class GHSL:
                     "name": resource_info[data_type]["name"],
                     "description": f"{resource_desc} ({file_size} GB)",
                     "url": file_url,
-                    "format": "GeoTIFF",
                 }
             )
+            resource.set_format("GeoTIFF")
             dataset.add_update_resource(resource)
 
         return dataset
@@ -271,7 +271,7 @@ class GHSL:
                     "description": resource_desc,
                 }
             )
-            resource.set_format("GeoTiff")
+            resource.set_format("geotiff")
             resource.set_file_to_upload(self.country_data[iso3][data_type])
             dataset.add_update_resource(resource)
 
