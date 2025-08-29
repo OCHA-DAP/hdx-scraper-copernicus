@@ -341,14 +341,10 @@ class TestCopernicus:
                         "name": "GHS Built-up Surface",
                         "description": "Product: GHS-BUILT-S, Epoch: 2020, Resolution: 100m, Coordinate system: Mollweide, Classification: total - residential (RES) & non residential (NRES) classification.",
                         "format": "geotiff",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                     {
                         "name": "GHS Population Grid",
                         "description": "Product: GHS-POP, Epoch: 2020, Resolution: 100m, Coordinate system: Mollweide",
                         "format": "geotiff",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     },
                 ]
