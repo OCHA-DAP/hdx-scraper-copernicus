@@ -112,7 +112,7 @@ class Drought:
     def process(self, iso3: str, file_paths: Dict) -> Dict | None:
         if len(file_paths) == 0:
             return None
-        if iso3 == "ATA":
+        if iso3 in self._configuration["skip_countries"]:
             return None
         logger.info(f"Processing {iso3}")
         country_name = Country.get_country_name_from_iso3(iso3)
