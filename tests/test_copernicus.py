@@ -149,16 +149,12 @@ class TestCopernicus:
                         "description": "Data from 2025-01-01 to 2025-06-10",
                         "url": "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/GDO_Fraction_of_Absorbed_Photosynthetically_Active_Radiation_Anomalies_fAPAR_VIIRS/ver3-0-0/fpanv_m_gdo_20250101_20250601_t.zip",
                         "format": "GeoTIFF",
-                        "resource_type": "api",
-                        "url_type": "api",
                     },
                     {
                         "name": "fpanv_m_gdo_20240101_20241221_t.zip",
                         "description": "Data from 2024-01-01 to 2024-12-31",
                         "url": "https://drought.emergency.copernicus.eu/data/Drought_Observatories_datasets/GDO_Fraction_of_Absorbed_Photosynthetically_Active_Radiation_Anomalies_fAPAR_VIIRS/ver3-0-0/fpanv_m_gdo_20240101_20241221_t.zip",
                         "format": "GeoTIFF",
-                        "resource_type": "api",
-                        "url_type": "api",
                     },
                 ]
 
@@ -207,8 +203,6 @@ class TestCopernicus:
                         "name": "cub_fpanv_m_gdo_20250101_20250601_t.zip",
                         "description": "Data from 2025-01-01 to 2025-06-10",
                         "format": "GeoTIFF",
-                        "resource_type": "file.upload",
-                        "url_type": "upload",
                     }
                 ]
 
