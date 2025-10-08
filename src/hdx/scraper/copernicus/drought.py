@@ -65,32 +65,49 @@ class Drought:
                 if "ver" not in subfolder:
                     continue
                 subfolders.append(subfolder)
+
+            def process_subfolder(subfolder) -> bool:
+                sub_lines = get_lines(
+                    self._retriever,
+                    f"{base_url}{subfolder}",
+                    filename=f"drought_{data_type}_{subfolder.replace('/', '')}.txt",
+                )
+                for sub_line in sub_lines:
+                    files_found = False
+                    subsubfolder = sub_line.get("href")
+                    if not subsubfolder.endswith(".zip"):
+                        continue
+                    files_found = True
+                    start_date, end_date = _parse_date(subsubfolder)
+                    dict_of_lists_add(self.dates, data_type, start_date)
+                    dict_of_lists_add(self.dates, data_type, end_date)
+                    zip_url = f"{base_url}{subfolder}{subsubfolder}"
+                    dict_of_lists_add(self.global_data, data_type, zip_url)
+                    if file_type == "GeoJSON":
+                        file_path = self._retriever.download_file(
+                            zip_url, filename=basename(zip_url)
+                        )
+                        dict_of_lists_add(self.downloaded_data, data_type, file_path)
+                    elif download_country and subsubfolder not in dataset_files:
+                        file_path = self._retriever.download_file(
+                            zip_url, filename=basename(zip_url)
+                        )
+                        dict_of_lists_add(self.downloaded_data, data_type, file_path)
+                return files_found
+
             subfolder = subfolders[-1]
-            sub_lines = get_lines(
-                self._retriever,
-                f"{base_url}{subfolder}",
-                filename=f"drought_{data_type}_{subfolder.replace('/', '')}.txt",
-            )
-            for sub_line in sub_lines:
-                subsubfolder = sub_line.get("href")
-                if not subsubfolder.endswith(".zip"):
+            files_found = process_subfolder(subfolder)
+            if not files_found:
+                if len(subfolders) == 1:
+                    logger.error(f"No files found in subfolder {subfolder}")
                     continue
-                start_date, end_date = _parse_date(subsubfolder)
-                dict_of_lists_add(self.dates, data_type, start_date)
-                dict_of_lists_add(self.dates, data_type, end_date)
-                zip_url = f"{base_url}{subfolder}{subsubfolder}"
-                dict_of_lists_add(self.global_data, data_type, zip_url)
-                if file_type == "GeoJSON":
-                    file_path = self._retriever.download_file(
-                        zip_url, filename=basename(zip_url)
-                    )
-                    dict_of_lists_add(self.downloaded_data, data_type, file_path)
-                elif download_country and subsubfolder not in dataset_files:
-                    file_path = self._retriever.download_file(
-                        zip_url, filename=basename(zip_url)
-                    )
-                    dict_of_lists_add(self.downloaded_data, data_type, file_path)
-            global_data = [basename(f) for f in self.global_data[data_type]]
+                logger.warning(
+                    f"No files found in subfolder {subfolder}, trying previous folder"
+                )
+                subfolder = subfolders[-2]
+                _ = process_subfolder(subfolder)
+
+            global_data = [basename(f) for f in self.global_data.get(data_type, [])]
             if sorted(global_data) != sorted(dataset_files):
                 updated = True
         return updated
