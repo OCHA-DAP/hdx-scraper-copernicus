@@ -2,6 +2,8 @@ FROM public.ecr.aws/unocha/python:3.13-stable
 
 WORKDIR /srv
 
+COPY .. .
+
 RUN --mount=type=bind,source=requirements.txt,target=requirements.txt \
     apk add --no-cache \
     aws-cli \
@@ -15,7 +17,5 @@ RUN --mount=type=bind,source=requirements.txt,target=requirements.txt \
     pip install --no-cache-dir -r requirements.txt && \
     apk del .build-deps && \
     rm -rf /var/lib/apk/*
-
-COPY src ./
 
 CMD "python3 run.py"
