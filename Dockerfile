@@ -15,6 +15,7 @@ RUN --mount=type=bind,source=requirements.txt,target=requirements.txt \
     llvm15-dev && \
     LLVM_CONFIG=/usr/bin/llvm-config-15 \
     pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir . && \
     apk del .build-deps && \
     rm -rf /var/lib/apk/*
 
