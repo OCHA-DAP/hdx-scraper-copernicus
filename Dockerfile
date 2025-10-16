@@ -5,19 +5,17 @@ WORKDIR /srv
 COPY .. .
 
 RUN --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    apk add --no-cache --upgrade --virtual .build-deps \
-        git && \
-    aws-cli \
+    apk add --no-cache \
     gdal-driver-parquet \
     gdal-tools && \
     apk add --no-cache --virtual .build-deps \
+    apache-arrow-dev \
     build-base \
+    cmake \
     gdal-dev \
-    llvm15-dev && \
-    LLVM_CONFIG=/usr/bin/llvm-config-15 \
+    geos-dev \
     pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir . && \
     apk del .build-deps && \
-    rm -rf /var/lib/apk/*
+    rm -rf /root/.cache
 
 CMD "python3 run.py"
