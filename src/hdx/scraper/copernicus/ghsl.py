@@ -76,9 +76,7 @@ class GHSL:
             self.global_boundaries[iso] = [row["geometry"]]
         return list(self.global_boundaries.keys())
 
-    def get_data(
-        self, current_year: int, download_country: bool, running_on_gha: bool
-    ) -> bool:
+    def get_data(self, current_year: int, download_country: bool) -> bool:
         file_patterns = self._configuration["file_patterns"]
         dataset_dates = _get_ghs_dataset_dates(list(file_patterns.keys()))
         base_url = self._configuration["base_url"]
@@ -114,8 +112,6 @@ class GHSL:
                 and year == dataset_dates[data_type]["estimated"]
             ):
                 return False
-            if running_on_gha:
-                return True
             self.data_year[data_type] = year
             global_file = f"{base_url}{subfolder}{subsubfolder}V1-0/{subsubfolder.replace('/', '')}_V1_0.zip"
             self.global_data[data_type] = global_file

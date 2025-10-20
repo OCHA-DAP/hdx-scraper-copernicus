@@ -207,7 +207,7 @@ class TestCopernicus:
                 ]
 
                 ghsl = GHSL(configuration["ghsl"], retriever, boundaries_mollweide)
-                updated = ghsl.get_data(2024, True, False)
+                updated = ghsl.get_data(2024, True)
                 assert updated is True
                 assert ghsl.data_year == {"built": 2020, "population": 2020}
                 assert ghsl.global_data == {

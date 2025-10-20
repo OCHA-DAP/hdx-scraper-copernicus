@@ -6,8 +6,6 @@ script then creates in HDX.
 """
 
 import logging
-import sys
-from os import getenv
 from os.path import expanduser, join
 
 from hdx.api.configuration import Configuration
@@ -52,7 +50,6 @@ def main(
     configuration = Configuration.read()
     User.check_current_user_write_access("copernicus")
 
-    running_on_gha = False if getenv("GITHUB_ACTIONS") is None else True
     with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
         temp_dir = info["folder"]
         today = now_utc()
@@ -72,6 +69,8 @@ def main(
 
             drought = Drought(configuration["drought"], retriever, boundaries_wgs)
             drought_updated = drought.get_data(generate_country_datasets, force_update)
+            if not drought_updated:
+                logger.info("Drought data not updated")
             if drought_updated:
                 for data_type in drought.global_data:
                     if generate_global_datasets:
@@ -113,9 +112,10 @@ def main(
             ghsl_updated = ghsl.get_data(
                 year,
                 generate_country_datasets,
-                running_on_gha,
             )
-            if ghsl_updated and not running_on_gha:
+            if not ghsl_updated:
+                logger.info("GHSL data not updated")
+            if ghsl_updated:
                 if generate_global_datasets:
                     dataset = ghsl.generate_global_dataset()
                     dataset.update_from_yaml(
@@ -153,10 +153,6 @@ def main(
                             updated_by_script=_UPDATED_BY_SCRIPT,
                             batch=info["batch"],
                         )
-
-            if ghsl_updated and running_on_gha:
-                logger.error("GHSL data has been updated, run locally")
-                sys.exit(1)
 
 
 if __name__ == "__main__":
