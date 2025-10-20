@@ -124,7 +124,7 @@ inflect==7.5.0
     # via
     #   -c requirements.txt
     #   quantulum3
-iniconfig==2.1.0
+iniconfig==2.3.0
     # via pytest
 isodate==0.7.2
     # via
@@ -227,7 +227,7 @@ pockets==0.9.1
     # via
     #   -c requirements.txt
     #   sphinxcontrib-napoleon
-pydantic==2.12.2
+pydantic==2.12.3
     # via
     #   -c requirements.txt
     #   frictionless
