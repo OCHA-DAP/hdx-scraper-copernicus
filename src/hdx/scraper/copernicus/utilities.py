@@ -6,6 +6,7 @@ from geopandas import GeoDataFrame, read_file
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.utilities.retriever import Retrieve
+from pandas import isna
 from shapely.validation import make_valid
 
 logger = logging.getLogger(__name__)
@@ -44,7 +45,7 @@ def make_valid_dissolve(lyr: GeoDataFrame) -> GeoDataFrame:
     for i, row in lyr.iterrows():
         if not lyr.geometry[i].is_valid:
             lyr.loc[i, "geometry"] = make_valid(lyr.geometry[i])
-        if row["STATUS"] and row["STATUS"][:4] == "Adm.":
+        if not isna(row["STATUS"]) and row["STATUS"][:4] == "Adm.":
             lyr.loc[i, "ISO_3"] = row["Color_Code"]
     lyr = lyr.dissolve(by="ISO_3", as_index=False)
     lyr = lyr.drop(
