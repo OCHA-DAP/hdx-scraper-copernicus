@@ -1,5 +1,6 @@
 import datetime
 from os.path import join
+from pathlib import PosixPath
 
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
@@ -66,11 +67,17 @@ class TestCopernicus:
                 }
                 assert drought.downloaded_data == {
                     "drought_tracking": [
-                        "tests/fixtures/input/jspa3_m_wld_20240101_20241221_t.zip",
-                        "tests/fixtures/input/jspa3_m_wld_20250101_20250611_t.zip",
+                        PosixPath(
+                            "tests/fixtures/input/jspa3_m_wld_20240101_20241221_t.zip"
+                        ),
+                        PosixPath(
+                            "tests/fixtures/input/jspa3_m_wld_20250101_20250611_t.zip"
+                        ),
                     ],
                     "fapar": [
-                        "tests/fixtures/input/fpanv_m_gdo_20250101_20250601_t.zip"
+                        PosixPath(
+                            "tests/fixtures/input/fpanv_m_gdo_20250101_20250601_t.zip"
+                        )
                     ],
                 }
                 assert drought.global_data == {
