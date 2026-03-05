@@ -285,7 +285,7 @@ class Drought:
         resources = dataset.get_resources()
         resources = sorted(resources, key=lambda d: d["name"], reverse=True)
         resource_ids = [resource["id"] for resource in resources]
-        dataset.reorder_resources(resource_ids, hxl_update=False)
+        dataset.reorder_resources(resource_ids)
 
 
 def _get_dataset_files(dataset_name: str) -> List:
